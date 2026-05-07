@@ -210,6 +210,32 @@
   .results-header .count{
     font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);
   }
+  .results-header .right-cluster{
+    display:flex;align-items:center;gap:18px;
+  }
+  button.export-btn{
+    padding:9px 18px;
+    background:transparent;
+    color:var(--navy);
+    border:1px solid var(--gold);
+    border-radius:2px;
+    font-family:'Inter',sans-serif;font-weight:600;font-size:11px;
+    letter-spacing:1.6px;text-transform:uppercase;cursor:pointer;
+    transition:all 0.16s;
+    display:inline-flex;align-items:center;gap:8px;
+  }
+  button.export-btn:hover{
+    background:var(--navy);color:var(--gold-bright);
+    box-shadow:0 4px 14px rgba(10,31,68,0.15);
+  }
+  button.export-btn .arrow{
+    font-size:13px;line-height:1;
+  }
+  button.export-btn:disabled{
+    opacity:0.4;cursor:not-allowed;
+    background:transparent;color:var(--muted);border-color:rgba(10,31,68,0.15);
+    box-shadow:none;
+  }
   .deal-card{
     background:var(--paper);
     border:1px solid rgba(10,31,68,0.1);
@@ -461,7 +487,12 @@
     <div id="resultsPanel" style="display:none">
       <div class="results-header">
         <h2>Sourced <em>Opportunities</em></h2>
-        <div class="count" id="resultsCount"></div>
+        <div class="right-cluster">
+          <div class="count" id="resultsCount"></div>
+          <button class="export-btn" id="exportCsvBtn" title="Download results as CSV" disabled>
+            <span class="arrow">↓</span> Export CSV
+          </button>
+        </div>
       </div>
       <div id="dealsGrid"></div>
     </div>
@@ -486,6 +517,8 @@ const STATE = {
   platforms: { bizbuysell:true, bizquest:true, loopnet:true, dealstream:true,
                bbb:false, acquireco:false, sunbelt:false, murphy:false, vrbb:false }
 };
+
+let LAST_RESULTS = [];
 
 // Pill toggle handlers
 document.querySelectorAll('#strategyPills .pill').forEach(p=>{
@@ -831,6 +864,9 @@ function fmtUSDk(n){
 // Render
 //----------------------------------------------------------------
 function renderResults(deals){
+  LAST_RESULTS = deals;
+  const exportBtn = document.getElementById('exportCsvBtn');
+  if(exportBtn) exportBtn.disabled = (deals.length === 0);
   const grid = document.getElementById('dealsGrid');
   const count = document.getElementById('resultsCount');
   grid.innerHTML='';
@@ -911,26 +947,10 @@ async function runScout(){
   const customCtx = document.getElementById('customCtx').value.trim();
   if(customCtx) logPush(`Custom sourcing notes applied`, 'log-warn');
 
-  // Detect runtime: live API only inside Claude artifact runtime
-  const isClaudeSandbox = typeof window !== 'undefined' &&
-    (window.location.hostname.includes('claude') ||
-     window.location.hostname.includes('anthropic') ||
-     window.location.hostname === '');
+  // === LIVE CLAUDE API VIA CLOUDFLARE WORKER PROXY ===
+  // Worker holds the ANTHROPIC_API_KEY as a secret; never exposed to browser.
+  const WORKER_ENDPOINT = 'https://hsw-scout.brian-wyss.workers.dev';
 
-  if(!isClaudeSandbox){
-    logPush('Standalone deployment detected — sourcing from curated HSW deal library', 'log-warn');
-    logPush('(Live Anthropic API restricted to Claude artifact runtime; standalone deploys use the institutional library)', 'log-warn');
-    await sleep(700);
-    logPush(`Pulling listings from ${activePlats.length} platform feeds…`);
-    await sleep(800);
-    logPush('Applying HSW Partners buy box scoring matrix…');
-    await sleep(500);
-    runFromLibrary(ctx);
-    btn.disabled=false; btn.textContent='Scout Listings';
-    return;
-  }
-
-  // === LIVE CLAUDE API PATH (artifact runtime) ===
   const systemPrompt = `You are the HSW Partners Deal Scout — an institutional-grade AI deal-sourcing agent operated by Brian Wyss through Avila Phoenix Ventures, LLC for Sarah Wexler / HSW Partners, LLC.
 
 BUYER PROFILE:
@@ -999,19 +1019,23 @@ Constraints:
 - Only include deals that plausibly clear the distribution threshold for their strategy`;
 
   try{
-    logPush('Querying Claude (claude-sonnet-4) for live deal generation…');
-    const resp = await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
+    logPush('Querying Claude via Cloudflare Worker proxy…');
+    const resp = await fetch(WORKER_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model:'claude-sonnet-4-20250514',
+        model: 'claude-sonnet-4-5',
         max_tokens: 4500,
         system: systemPrompt,
-        messages:[
-          {role:'user', content:`Run the sweep and return the JSON array of qualifying HSW deals. Custom sourcing notes: ${customCtx || 'apply standard buy box.'}`}
+        messages: [
+          { role: 'user', content: `Run the sweep and return the JSON array of qualifying HSW deals. Custom sourcing notes: ${customCtx || 'apply standard buy box.'}` }
         ]
       })
     });
+    if(!resp.ok){
+      logPush(`Worker returned ${resp.status} — falling back to curated library`, 'log-warn');
+      runFromLibrary(ctx); btn.disabled=false; btn.textContent='Scout Listings'; return;
+    }
     const data = await resp.json();
     const text = (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('\n').replace(/```json|```/g,'').trim();
     let deals;
@@ -1020,14 +1044,14 @@ Constraints:
       logPush('Live response parse failed — falling back to curated library', 'log-err');
       runFromLibrary(ctx); btn.disabled=false; btn.textContent='Scout Listings'; return;
     }
-    logPush(`Received ${deals.length} candidate listings from agent`, 'log-ok');
+    logPush(`Received ${deals.length} candidate listings from live agent`, 'log-ok');
     logPush('Applying HSW scoring matrix…');
     deals.forEach(d=>d.score = scoreDeal(d, ctx));
     deals = deals.filter(d=>d.score>0).sort((a,b)=>b.score-a.score);
     logPush(`${deals.length} deals cleared the buy box gate`, 'log-ok');
     renderResults(deals);
   }catch(err){
-    logPush(`API error: ${err.message} — using curated library`, 'log-err');
+    logPush(`Worker proxy error: ${err.message} — using curated library`, 'log-err');
     runFromLibrary(ctx);
   }
   btn.disabled=false; btn.textContent='Scout Listings';
@@ -1041,7 +1065,107 @@ function runFromLibrary(ctx){
   renderResults(deals);
 }
 
+//----------------------------------------------------------------
+// CSV Export
+//----------------------------------------------------------------
+
+function csvEscape(val){
+  if(val === null || val === undefined) return '';
+  const s = String(val);
+  // Escape quotes by doubling, wrap in quotes if contains comma/quote/newline
+  if(s.includes('"') || s.includes(',') || s.includes('\n') || s.includes('\r')){
+    return '"' + s.replace(/"/g,'""') + '"';
+  }
+  return s;
+}
+
+function dealsToCSV(deals){
+  const headers = [
+    'HSW Fit Score',
+    'Verdict',
+    'Business Name',
+    'Industry',
+    'Sub-Industry',
+    'Strategy',
+    'City',
+    'State',
+    'Year Established',
+    'Years Operating',
+    'Employees',
+    'Asking Price (USD)',
+    'SDE (USD)',
+    'Revenue (USD)',
+    'Asking / SDE Multiple',
+    'Operating Summary',
+    'HSW Fit Notes',
+    'Top Risk / Diligence Concern',
+    'Listing Source'
+  ];
+  const currentYear = new Date().getFullYear();
+  const verdictLabel = v => v==='advance'?'ADVANCE TO LOI DRAFTING':v==='review'?'FURTHER DILIGENCE REQUIRED':'PASS';
+  const indLabel = i => ({home:'Home Services',pet:'Pet Care / Veterinary',mfg:'Manufacturing'})[i] || i;
+  const stratLabel = s => s==='standalone'?'Stand-Alone':'Add-On / Stacking';
+
+  const rows = deals.map(d => [
+    d.score,
+    verdictLabel(d.verdict),
+    d.name,
+    indLabel(d.industry),
+    d.subindustry,
+    stratLabel(d.strategy),
+    d.city.replace(/,\s*[A-Z]{2}.*$/, ''), // strip trailing state if present
+    d.state,
+    currentYear - d.age,
+    d.age,
+    d.employees,
+    d.asking,
+    d.sde,
+    d.revenue,
+    (d.asking / d.sde).toFixed(2) + 'x',
+    d.summary,
+    d.fitNotes,
+    d.risk,
+    d.source
+  ].map(csvEscape).join(','));
+
+  // Header banner rows (commented-style metadata at top of CSV)
+  const ts = new Date();
+  const dateStr = ts.toISOString().split('T')[0];
+  const banner = [
+    `"HSW Partners Deal Scout — Sourced Opportunities"`,
+    `"Buyer: Sarah Wexler / HSW Partners, LLC"`,
+    `"Operating Partner: Brian Wyss · Avila Phoenix Ventures, LLC"`,
+    `"Generated: ${ts.toISOString()}"`,
+    `"Total deals: ${deals.length}"`,
+    ``,
+    headers.map(csvEscape).join(',')
+  ];
+
+  return banner.concat(rows).join('\r\n');
+}
+
+function downloadCSV(){
+  if(!LAST_RESULTS || LAST_RESULTS.length === 0){
+    logPush('No results to export', 'log-warn');
+    return;
+  }
+  const csv = dealsToCSV(LAST_RESULTS);
+  // BOM for Excel UTF-8 compatibility
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const ts = new Date();
+  const stamp = ts.toISOString().slice(0,10) + '_' + ts.toTimeString().slice(0,5).replace(':','');
+  const filename = `HSW_Deal_Scout_${stamp}.csv`;
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  logPush(`Exported ${LAST_RESULTS.length} deals → ${filename}`, 'log-ok');
+}
+
 document.getElementById('scoutBtn').addEventListener('click', runScout);
+document.getElementById('exportCsvBtn').addEventListener('click', downloadCSV);
 </script>
 
 </body>
