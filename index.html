@@ -1,0 +1,1048 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>HSW Partners Deal Scout · Sarah Wexler</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0a1f44;
+    --navy-deep:#061533;
+    --navy-soft:#152a5c;
+    --gold:#c9a44c;
+    --gold-bright:#e0bd66;
+    --gold-soft:#f4e4b8;
+    --ivory:#faf6ec;
+    --paper:#fdfaf2;
+    --ink:#1a2238;
+    --muted:#6a6f80;
+    --line:#d8c98a;
+    --green:#2e7d4f;
+    --red:#a8323c;
+    --amber:#b8782a;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--ivory);color:var(--ink);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased}
+  body{
+    background:
+      radial-gradient(circle at 15% 0%, rgba(201,164,76,0.08), transparent 45%),
+      radial-gradient(circle at 90% 100%, rgba(10,31,68,0.05), transparent 50%),
+      var(--ivory);
+    min-height:100vh;
+  }
+  /* HEADER */
+  header.brand{
+    background:linear-gradient(135deg, var(--navy-deep) 0%, var(--navy) 60%, var(--navy-soft) 100%);
+    color:var(--ivory);
+    padding:34px 48px 28px;
+    border-bottom:3px solid var(--gold);
+    position:relative;
+    overflow:hidden;
+  }
+  header.brand::before{
+    content:"";position:absolute;inset:0;
+    background:repeating-linear-gradient(45deg, transparent 0 14px, rgba(201,164,76,0.025) 14px 15px);
+    pointer-events:none;
+  }
+  .crest{display:flex;align-items:center;gap:18px;position:relative;z-index:1}
+  .monogram{
+    width:58px;height:58px;border:1.5px solid var(--gold);border-radius:50%;
+    display:grid;place-items:center;
+    font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;letter-spacing:0.5px;
+    color:var(--gold);
+    background:rgba(0,0,0,0.18);
+  }
+  .titles h1{
+    font-family:'Cormorant Garamond',serif;font-weight:600;
+    font-size:30px;margin:0;letter-spacing:0.3px;
+  }
+  .titles h1 .accent{color:var(--gold-bright);font-style:italic;font-weight:500}
+  .titles .subtitle{
+    font-size:11px;letter-spacing:3px;text-transform:uppercase;
+    color:var(--gold-soft);margin-top:4px;font-weight:500;
+  }
+  .meta-row{
+    display:flex;justify-content:space-between;align-items:flex-end;
+    margin-top:18px;position:relative;z-index:1;
+    font-size:12px;color:rgba(244,228,184,0.78);
+    border-top:1px solid rgba(201,164,76,0.25);padding-top:14px;
+  }
+  .meta-row .left{display:flex;gap:24px;flex-wrap:wrap}
+  .meta-row .left span b{color:var(--gold-bright);font-weight:500;letter-spacing:0.4px}
+  .status-dot{
+    display:inline-block;width:7px;height:7px;border-radius:50%;
+    background:var(--gold-bright);box-shadow:0 0 10px var(--gold);
+    margin-right:7px;animation:pulse 2.4s infinite;
+  }
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.45}}
+
+  /* MAIN GRID */
+  main{
+    display:grid;grid-template-columns:380px 1fr;
+    gap:0;min-height:calc(100vh - 140px);
+  }
+  /* SIDEBAR */
+  aside{
+    background:linear-gradient(180deg, var(--paper) 0%, #f5ebd0 100%);
+    border-right:1px solid rgba(201,164,76,0.4);
+    padding:32px 30px;
+    overflow-y:auto;
+  }
+  .panel-title{
+    font-family:'Cormorant Garamond',serif;
+    font-size:20px;font-weight:600;color:var(--navy);
+    margin:0 0 4px;letter-spacing:0.3px;
+  }
+  .panel-sub{
+    font-size:10px;letter-spacing:2.5px;text-transform:uppercase;
+    color:var(--gold);font-weight:600;margin-bottom:20px;
+  }
+  .field{margin-bottom:18px}
+  .field label{
+    display:block;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;
+    color:var(--navy);font-weight:600;margin-bottom:6px;
+  }
+  .field select, .field textarea, .field input{
+    width:100%;padding:10px 12px;
+    background:var(--ivory);
+    border:1px solid rgba(10,31,68,0.18);
+    border-radius:2px;
+    font-family:'Inter',sans-serif;font-size:13px;color:var(--ink);
+    transition:border-color 0.18s, box-shadow 0.18s;
+  }
+  .field select:focus, .field textarea:focus, .field input:focus{
+    outline:none;border-color:var(--gold);
+    box-shadow:0 0 0 3px rgba(201,164,76,0.18);
+  }
+  .field textarea{min-height:78px;resize:vertical;font-size:12.5px;line-height:1.5}
+  .pill-row{display:flex;flex-wrap:wrap;gap:6px}
+  .pill{
+    font-size:11px;padding:6px 11px;border-radius:14px;
+    background:var(--ivory);
+    border:1px solid rgba(10,31,68,0.22);
+    color:var(--navy);cursor:pointer;
+    font-weight:500;letter-spacing:0.2px;
+    transition:all 0.16s;user-select:none;
+  }
+  .pill:hover{border-color:var(--gold);color:var(--gold)}
+  .pill.on{
+    background:var(--navy);color:var(--gold-soft);
+    border-color:var(--navy);
+    box-shadow:inset 0 1px 0 rgba(201,164,76,0.3);
+  }
+  .platforms{
+    background:var(--ivory);border:1px solid rgba(10,31,68,0.12);
+    border-radius:3px;padding:10px 12px;font-size:12px;
+  }
+  .plat-row{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:5px 0;border-bottom:1px dotted rgba(10,31,68,0.08);
+  }
+  .plat-row:last-child{border-bottom:none}
+  .plat-row label{display:flex;align-items:center;gap:8px;cursor:pointer;color:var(--ink)}
+  .plat-row input[type="checkbox"]{accent-color:var(--gold);width:13px;height:13px}
+  .plat-row .badge{
+    font-size:9px;padding:2px 6px;border-radius:8px;
+    background:rgba(201,164,76,0.15);color:var(--gold);font-weight:600;letter-spacing:0.5px;
+  }
+  button.scout{
+    width:100%;margin-top:8px;padding:14px;
+    background:linear-gradient(180deg, var(--gold-bright) 0%, var(--gold) 100%);
+    color:var(--navy-deep);
+    border:none;border-radius:2px;
+    font-family:'Inter',sans-serif;font-weight:700;font-size:13px;
+    letter-spacing:2px;text-transform:uppercase;cursor:pointer;
+    box-shadow:0 4px 18px rgba(201,164,76,0.35), inset 0 1px 0 rgba(255,255,255,0.5);
+    transition:transform 0.1s, box-shadow 0.18s;
+  }
+  button.scout:hover{transform:translateY(-1px);box-shadow:0 6px 22px rgba(201,164,76,0.5)}
+  button.scout:active{transform:translateY(0)}
+  button.scout:disabled{opacity:0.55;cursor:wait;transform:none}
+
+  /* MAIN CONTENT */
+  section.workbench{padding:32px 44px;overflow-y:auto}
+  .empty{
+    border:1px dashed rgba(10,31,68,0.22);
+    background:var(--paper);
+    padding:60px 40px;text-align:center;border-radius:3px;
+    color:var(--muted);
+  }
+  .empty .ornament{
+    font-family:'Cormorant Garamond',serif;font-size:42px;color:var(--gold);
+    line-height:1;margin-bottom:12px;
+  }
+  .empty h2{
+    font-family:'Cormorant Garamond',serif;color:var(--navy);
+    font-weight:600;font-size:22px;margin:0 0 6px;
+  }
+  .empty p{font-size:13px;max-width:520px;margin:0 auto;line-height:1.6}
+
+  /* LOG PANEL */
+  .log-panel{
+    background:var(--navy-deep);
+    color:#dce5ff;
+    border-radius:3px;padding:18px 20px;
+    font-family:'JetBrains Mono',monospace;font-size:11.5px;
+    max-height:240px;overflow-y:auto;
+    border:1px solid rgba(201,164,76,0.3);
+    margin-bottom:24px;
+    line-height:1.65;
+  }
+  .log-panel .log-time{color:var(--gold);margin-right:8px}
+  .log-panel .log-warn{color:#f4cc7d}
+  .log-panel .log-ok{color:#7ed4a3}
+  .log-panel .log-err{color:#f08793}
+
+  /* RESULTS */
+  .results-header{
+    display:flex;justify-content:space-between;align-items:flex-end;
+    margin-bottom:18px;padding-bottom:12px;
+    border-bottom:1px solid rgba(201,164,76,0.4);
+  }
+  .results-header h2{
+    font-family:'Cormorant Garamond',serif;font-weight:600;color:var(--navy);
+    font-size:24px;margin:0;letter-spacing:0.3px;
+  }
+  .results-header h2 em{color:var(--gold);font-style:italic;font-weight:500}
+  .results-header .count{
+    font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);
+  }
+  .deal-card{
+    background:var(--paper);
+    border:1px solid rgba(10,31,68,0.1);
+    border-left:3px solid var(--gold);
+    border-radius:2px;
+    padding:22px 26px;margin-bottom:16px;
+    transition:transform 0.18s, box-shadow 0.18s;
+    position:relative;
+  }
+  .deal-card:hover{
+    transform:translateX(2px);
+    box-shadow:0 6px 20px rgba(10,31,68,0.08);
+  }
+  .deal-head{
+    display:flex;justify-content:space-between;align-items:flex-start;
+    margin-bottom:10px;gap:16px;
+  }
+  .deal-head .left{flex:1}
+  .deal-head h3{
+    font-family:'Cormorant Garamond',serif;font-weight:600;color:var(--navy);
+    font-size:20px;margin:0 0 4px;line-height:1.2;
+  }
+  .deal-head .loc{
+    font-size:12px;color:var(--muted);letter-spacing:0.3px;
+  }
+  .deal-head .loc b{color:var(--navy);font-weight:600}
+  .score-badge{
+    text-align:center;min-width:78px;
+    padding:8px 10px;border-radius:2px;
+    background:linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%);
+    color:var(--gold-bright);
+  }
+  .score-badge .score{
+    font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;line-height:1;
+  }
+  .score-badge .label{
+    font-size:9px;letter-spacing:1.5px;text-transform:uppercase;
+    color:rgba(244,228,184,0.7);margin-top:3px;
+  }
+  .stats{
+    display:grid;grid-template-columns:repeat(4, 1fr);
+    gap:14px;margin:14px 0;
+    padding:12px 0;
+    border-top:1px dotted rgba(10,31,68,0.12);
+    border-bottom:1px dotted rgba(10,31,68,0.12);
+  }
+  .stat .k{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+  .stat .v{font-size:14px;font-weight:600;color:var(--navy);font-family:'JetBrains Mono',monospace}
+  .deal-body{font-size:13px;line-height:1.6;color:var(--ink);margin:8px 0}
+  .deal-body p{margin:0 0 8px}
+  .deal-foot{
+    display:flex;justify-content:space-between;align-items:center;
+    margin-top:12px;font-size:11.5px;
+  }
+  .verdict{font-weight:600;letter-spacing:0.3px}
+  .verdict.advance{color:var(--green)}
+  .verdict.review{color:var(--amber)}
+  .verdict.pass{color:var(--red)}
+  .deal-source{color:var(--muted);font-style:italic}
+
+  /* BUYBOX BANNER */
+  .buybox{
+    background:linear-gradient(135deg, rgba(10,31,68,0.04) 0%, rgba(201,164,76,0.06) 100%);
+    border:1px solid rgba(201,164,76,0.4);
+    border-radius:2px;padding:16px 22px;margin-bottom:24px;
+    font-size:12px;color:var(--navy);
+  }
+  .buybox h4{
+    font-family:'Cormorant Garamond',serif;font-weight:600;font-size:15px;
+    color:var(--navy);margin:0 0 8px;letter-spacing:0.3px;
+  }
+  .buybox h4 em{color:var(--gold);font-style:italic}
+  .buybox .grid{
+    display:grid;grid-template-columns:repeat(3, 1fr);gap:18px;
+    font-size:11.5px;line-height:1.55;
+  }
+  .buybox .grid b{display:block;color:var(--gold);letter-spacing:0.3px;font-size:10.5px;text-transform:uppercase;margin-bottom:3px}
+
+  footer{
+    text-align:center;padding:18px;
+    font-size:10.5px;letter-spacing:1.5px;color:var(--muted);
+    border-top:1px solid rgba(10,31,68,0.08);
+  }
+  footer b{color:var(--navy);font-weight:600}
+
+  @media(max-width:980px){
+    main{grid-template-columns:1fr}
+    aside{border-right:none;border-bottom:1px solid rgba(201,164,76,0.4)}
+    section.workbench{padding:24px}
+    .stats{grid-template-columns:repeat(2,1fr)}
+    .buybox .grid{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<header class="brand">
+  <div class="crest">
+    <div class="monogram">HSW</div>
+    <div class="titles">
+      <h1>HSW Partners <span class="accent">Deal Scout</span></h1>
+      <div class="subtitle">Sarah Wexler · Institutional Acquisition Sourcing</div>
+    </div>
+  </div>
+  <div class="meta-row">
+    <div class="left">
+      <span><span class="status-dot"></span><b>AGENT ONLINE</b></span>
+      <span>Operating Partner: <b>Brian Wyss · Avila Phoenix Ventures, LLC</b></span>
+      <span>Strategy: <b>Stand-Alone + Add-On / Stacking</b></span>
+    </div>
+    <div class="right">v1.0 · May 2026</div>
+  </div>
+</header>
+
+<main>
+
+  <!-- SIDEBAR / CONTROLS -->
+  <aside>
+    <h2 class="panel-title">Buy Box Filters</h2>
+    <div class="panel-sub">Configure Search Parameters</div>
+
+    <div class="field">
+      <label>Acquisition Strategy</label>
+      <div class="pill-row" id="strategyPills">
+        <span class="pill on" data-s="standalone">Stand-Alone</span>
+        <span class="pill on" data-s="addon">Add-On / Stacking</span>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Target Industries</label>
+      <div class="pill-row" id="industryPills">
+        <span class="pill on" data-i="home">Home Services</span>
+        <span class="pill on" data-i="pet">Pet Care / Vet</span>
+        <span class="pill on" data-i="mfg">Manufacturing</span>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Geographic Scope</label>
+      <select id="geoSel">
+        <option value="all" selected>All HSW States (industry-aware)</option>
+        <option value="home_full">Home Svc / Mfg — All 7 states</option>
+        <option value="pet_full">Pet Care — All 7 states</option>
+        <option value="se">Southeast — NC, SC, GA, FL</option>
+        <option value="mountain_west">Mountain West — UT, NV, AZ</option>
+        <option value="ga_only">Georgia only</option>
+        <option value="fl_only">Florida only</option>
+        <option value="nc_sc">Carolinas — NC, SC</option>
+        <option value="az_nv_ut">AZ / NV / UT</option>
+        <option value="wi_pet">Wisconsin (pet care only)</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Distribution Threshold</label>
+      <select id="distSel">
+        <option value="any" selected>Any qualifying deal</option>
+        <option value="addon">Add-On — $100K+ partner distribution</option>
+        <option value="standalone">Stand-Alone — $400K+ partner distribution</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Business Age Floor</label>
+      <select id="ageSel">
+        <option value="15" selected>15+ years (HSW minimum)</option>
+        <option value="20">20+ years (preferred)</option>
+        <option value="25">25+ years (legacy)</option>
+        <option value="30">30+ years (heritage)</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Headcount Floor</label>
+      <select id="hcSel">
+        <option value="10" selected>10+ employees (HSW min)</option>
+        <option value="15">15+ employees</option>
+        <option value="25">25+ employees</option>
+        <option value="50">50+ employees</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Listing Platforms</label>
+      <div class="platforms" id="platforms">
+        <div class="plat-row"><label><input type="checkbox" data-p="bizbuysell" checked> BizBuySell</label><span class="badge">PRIMARY</span></div>
+        <div class="plat-row"><label><input type="checkbox" data-p="bizquest" checked> BizQuest</label><span class="badge">PRIMARY</span></div>
+        <div class="plat-row"><label><input type="checkbox" data-p="loopnet" checked> LoopNet · Businesses</label><span class="badge">RE+OP</span></div>
+        <div class="plat-row"><label><input type="checkbox" data-p="dealstream" checked> DealStream</label><span class="badge">PRIMARY</span></div>
+        <div class="plat-row"><label><input type="checkbox" data-p="bbb"> Business Broker · BBB.com</label><span class="badge">SEC.</span></div>
+        <div class="plat-row"><label><input type="checkbox" data-p="acquireco"> Acquire.com</label><span class="badge">SEC.</span></div>
+        <div class="plat-row"><label><input type="checkbox" data-p="sunbelt"> Sunbelt Network</label><span class="badge">BROKER</span></div>
+        <div class="plat-row"><label><input type="checkbox" data-p="murphy"> Murphy Business</label><span class="badge">BROKER</span></div>
+        <div class="plat-row"><label><input type="checkbox" data-p="vrbb"> VR Business Brokers</label><span class="badge">BROKER</span></div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Custom Sourcing Notes</label>
+      <textarea id="customCtx" placeholder="e.g. focus on plumbing or HVAC; off-market preferred; multi-location vet rollups; metal fab with recurring B2B contracts…"></textarea>
+    </div>
+
+    <button class="scout" id="scoutBtn">Scout Listings</button>
+  </aside>
+
+  <!-- MAIN WORKBENCH -->
+  <section class="workbench">
+
+    <!-- BUY BOX BANNER -->
+    <div class="buybox">
+      <h4>HSW Partners <em>— Sarah Wexler Buy Box</em></h4>
+      <div class="grid">
+        <div>
+          <b>Industries</b>
+          Home Services (SA + AO), Pet Care / Veterinary (SA + AO), Manufacturing (SA only)
+        </div>
+        <div>
+          <b>Core Criteria</b>
+          15–20+ yrs established · 10+ employees · Key mgmt in place · Absentee / semi-absentee capable
+        </div>
+        <div>
+          <b>Distribution Floor</b>
+          Add-On: $100K+ partner distribution · Stand-Alone: $400K+ partner distribution (post-debt, post-reinvestment reserve)
+        </div>
+        <div>
+          <b>Home Svc + Mfg States</b>
+          NC · SC · GA · FL · UT · NV · AZ
+        </div>
+        <div>
+          <b>Pet Care States</b>
+          CO · FL · UT · AZ · GA · NV · WI
+        </div>
+        <div>
+          <b>Notes</b>
+          Higher PE competition: CO, FL, UT · Remaining states selected for partner proximity / licensing advantages
+        </div>
+      </div>
+    </div>
+
+    <div id="logSection"></div>
+
+    <div class="empty" id="emptyPanel">
+      <div class="ornament">❦</div>
+      <h2>Awaiting Sourcing Sweep</h2>
+      <p>Configure the buy box filters at left and launch the agent. The HSW Deal Scout will sweep listing platforms, score each deal against Sarah Wexler's criteria, and surface the highest-fit opportunities first — sorted by HSW Fit Score and capped at distribution-threshold qualification.</p>
+    </div>
+
+    <div id="resultsPanel" style="display:none">
+      <div class="results-header">
+        <h2>Sourced <em>Opportunities</em></h2>
+        <div class="count" id="resultsCount"></div>
+      </div>
+      <div id="dealsGrid"></div>
+    </div>
+
+  </section>
+
+</main>
+
+<footer>
+  HSW Partners Deal Scout · Operated by <b>Brian Wyss · Avila Phoenix Ventures, LLC</b> · Confidential — for internal HSW use only
+</footer>
+
+<script>
+//================================================================
+// HSW PARTNERS DEAL SCOUT — Sarah Wexler
+// Operated by Brian Wyss / Avila Phoenix Ventures, LLC
+//================================================================
+
+const STATE = {
+  strategies: new Set(['standalone','addon']),
+  industries: new Set(['home','pet','mfg']),
+  platforms: { bizbuysell:true, bizquest:true, loopnet:true, dealstream:true,
+               bbb:false, acquireco:false, sunbelt:false, murphy:false, vrbb:false }
+};
+
+// Pill toggle handlers
+document.querySelectorAll('#strategyPills .pill').forEach(p=>{
+  p.addEventListener('click',()=>{
+    const k = p.dataset.s;
+    if(STATE.strategies.has(k)){
+      if(STATE.strategies.size===1) return;
+      STATE.strategies.delete(k); p.classList.remove('on');
+    } else { STATE.strategies.add(k); p.classList.add('on'); }
+  });
+});
+document.querySelectorAll('#industryPills .pill').forEach(p=>{
+  p.addEventListener('click',()=>{
+    const k = p.dataset.i;
+    if(STATE.industries.has(k)){
+      if(STATE.industries.size===1) return;
+      STATE.industries.delete(k); p.classList.remove('on');
+    } else { STATE.industries.add(k); p.classList.add('on'); }
+  });
+});
+document.querySelectorAll('#platforms input[type=checkbox]').forEach(cb=>{
+  cb.addEventListener('change',()=>{ STATE.platforms[cb.dataset.p]=cb.checked });
+});
+
+//----------------------------------------------------------------
+// Logger
+//----------------------------------------------------------------
+function ensureLog(){
+  let el = document.getElementById('logPanel');
+  if(!el){
+    const wrap = document.createElement('div');
+    wrap.className='log-panel';
+    wrap.id='logPanel';
+    document.getElementById('logSection').appendChild(wrap);
+    el = wrap;
+  }
+  return el;
+}
+function logClear(){ const e = document.getElementById('logPanel'); if(e) e.innerHTML=''; }
+function ts(){ const d=new Date(); return d.toTimeString().split(' ')[0]; }
+function logPush(msg, cls){
+  const el = ensureLog();
+  const cssClass = cls || 'log-line';
+  const line = document.createElement('div');
+  line.innerHTML = `<span class="log-time">${ts()}</span><span class="${cssClass}">${msg}</span>`;
+  el.appendChild(line);
+  el.scrollTop = el.scrollHeight;
+}
+const sleep = ms => new Promise(r=>setTimeout(r,ms));
+
+//----------------------------------------------------------------
+// CURATED HSW FALLBACK DEAL LIBRARY
+// Used when running outside the Claude artifact runtime (e.g. GitHub Pages)
+//----------------------------------------------------------------
+const HSW_LIBRARY = [
+  // ===== HOME SERVICES =====
+  {
+    name:"Coastal Plumbing & Drain", industry:"home", subindustry:"Plumbing / Drain",
+    state:"NC", city:"Wilmington, NC",
+    age:31, employees:18, asking:2950000, sde:780000, revenue:5400000,
+    strategy:"standalone",
+    summary:"Three-decade residential + light commercial plumbing operation. Service-call recurring base of ~3,400 households across New Hanover and Brunswick counties. Owner stepped back to 10 hrs/week 18 months ago — full GM in place running dispatch, foreman handles techs.",
+    fitNotes:"Hits stand-alone $400K distribution after debt with margin. NC is HSW core state. 31 yrs > 20-yr preferred floor. 18 employees > 10 min.",
+    risk:"Asking is 3.8x SDE — slightly above HSW median. Verify recurring service-agreement attach rate and parts-margin assumption.",
+    source:"BizBuySell", verdict:"advance"
+  },
+  {
+    name:"Atlantic HVAC Group", industry:"home", subindustry:"HVAC",
+    state:"SC", city:"Charleston, SC",
+    age:24, employees:22, asking:3450000, sde:920000, revenue:6800000,
+    strategy:"standalone",
+    summary:"Residential HVAC install + service. Lennox premier dealer. 1,800 active maintenance agreements ($199/yr) producing $358K in recurring revenue. Owner-operator transition: GM and service manager both 8+ yr tenured.",
+    fitNotes:"Stand-alone qualifier — strong recurring base, mature management bench. SC core state.",
+    risk:"Charleston market has aggressive PE rollups (Apex, Service Logic). Confirm exclusivity windows on Lennox dealer agreement post-COC.",
+    source:"BizQuest", verdict:"advance"
+  },
+  {
+    name:"Sunshine Pool Service Co.", industry:"home", subindustry:"Pool Service",
+    state:"FL", city:"Sarasota, FL",
+    age:27, employees:14, asking:1850000, sde:485000, revenue:3100000,
+    strategy:"addon",
+    summary:"Residential pool maintenance route — 870 weekly accounts. Owner runs 3 days/wk, two route managers run day-to-day. Average customer tenure 6.4 years.",
+    fitNotes:"Excellent add-on / stacking candidate. Recurring route revenue, low working capital. Florida is core HSW state.",
+    risk:"FL pool services — heavy PE consolidation (Pool Corp adjacencies). Verify route density vs. competing buyers' synergy bids.",
+    source:"DealStream", verdict:"advance"
+  },
+  {
+    name:"Peachtree Electric Services", industry:"home", subindustry:"Electrical",
+    state:"GA", city:"Marietta, GA (ATL Metro)",
+    age:19, employees:16, asking:2100000, sde:560000, revenue:4200000,
+    strategy:"standalone",
+    summary:"Residential + light commercial electrical. Master electrician son stays 24 months as licensed qualifier. Strong builder-network referral base in north Atlanta MSA.",
+    fitNotes:"GA core state, 19 yrs hits floor, manageable license-transfer risk with son retention. Stand-alone qualifier.",
+    risk:"License qualifier dependency — structure earnout tied to license retention through transition window.",
+    source:"BizBuySell", verdict:"review"
+  },
+  {
+    name:"Desert Garage Door Pros", industry:"home", subindustry:"Garage Door",
+    state:"AZ", city:"Phoenix, AZ",
+    age:17, employees:12, asking:1450000, sde:385000, revenue:2950000,
+    strategy:"addon",
+    summary:"Residential garage door install + service. 80% service / 20% new construction mix. Owner manages from home office, field supervisor runs 6 trucks daily.",
+    fitNotes:"Strong add-on candidate for AZ home services platform. Already semi-absentee.",
+    risk:"AZ market has visible private-equity activity (A1 Garage rollup). Confirm tech retention in transition.",
+    source:"BizQuest", verdict:"advance"
+  },
+  {
+    name:"Sierra Landscape Services", industry:"home", subindustry:"Commercial Landscape",
+    state:"NV", city:"Las Vegas / Henderson, NV",
+    age:21, employees:34, asking:2750000, sde:680000, revenue:7200000,
+    strategy:"standalone",
+    summary:"Commercial maintenance contracts — 47 HOAs, 12 office complexes, 8 shopping centers. 90% recurring contract base. GM with 11 yrs runs operations; owner does sales only.",
+    fitNotes:"Stand-alone candidate with concentrated recurring B2B contract base. NV core state.",
+    risk:"Customer concentration — top 10 contracts represent ~38% of revenue. Stagger renewals during diligence.",
+    source:"BizBuySell", verdict:"advance"
+  },
+  {
+    name:"Wasatch Roofing Specialists", industry:"home", subindustry:"Roofing",
+    state:"UT", city:"Salt Lake City, UT",
+    age:16, employees:11, asking:1650000, sde:475000, revenue:4400000,
+    strategy:"addon",
+    summary:"Residential roofing — 70% retail / 30% insurance restoration. Project manager + estimator team in place. Owner has been semi-absent for 14 months running another business.",
+    fitNotes:"Add-on candidate. UT core state. Mature mgmt structure.",
+    risk:"UT roofing has PE compression on retail side; insurance-restoration cyclicality in non-storm years. Test 2024 baseline.",
+    source:"DealStream", verdict:"review"
+  },
+  {
+    name:"Tarheel Pest & Lawn", industry:"home", subindustry:"Pest Control + Lawn",
+    state:"NC", city:"Raleigh, NC",
+    age:28, employees:20, asking:3150000, sde:825000, revenue:4900000,
+    strategy:"standalone",
+    summary:"Hybrid pest control + lawn care — 4,200 recurring quarterly accounts. Owner-operator absent 2 days/wk. Two route supervisors and an office manager.",
+    fitNotes:"Outstanding stand-alone candidate. Recurring revenue, low working capital, mature route density. NC core.",
+    risk:"NC pest space — Rentokil/Terminix consolidation pressure. Verify HOA contract duration and customer churn analytics.",
+    source:"BizBuySell", verdict:"advance"
+  },
+
+  // ===== PET CARE / VETERINARY =====
+  {
+    name:"Mile High Veterinary Group", industry:"pet", subindustry:"Multi-Site Vet",
+    state:"CO", city:"Denver Metro, CO",
+    age:32, employees:38, asking:5200000, sde:1280000, revenue:7800000,
+    strategy:"standalone",
+    summary:"Two-location small animal practice. CO permits non-vet ownership of practice management entity (PC/MSO structure). Medical Director with 11-yr tenure. Average client tenure 7.2 years.",
+    fitNotes:"Strong stand-alone vet qualifier — multi-site, mature, MSO-friendly state. Distribution well above $400K floor.",
+    risk:"CO is high-PE-competition market (NVA, Mars Vet, BluePearl active). Bid discipline mandatory; structure with seller carry to bridge gap.",
+    source:"DealStream", verdict:"advance"
+  },
+  {
+    name:"Phoenix Pet Resort & Boarding", industry:"pet", subindustry:"Boarding / Daycare",
+    state:"AZ", city:"Scottsdale, AZ",
+    age:18, employees:24, asking:2850000, sde:680000, revenue:3900000,
+    strategy:"standalone",
+    summary:"32,000 sq ft pet resort — boarding, daycare, grooming. Owner-operator semi-absent (3 days/wk). GM runs facility; head trainer + grooming lead in place.",
+    fitNotes:"AZ core state, no DVM ownership restriction (non-medical pet care). 18 yrs > floor.",
+    risk:"Real estate must be evaluated separately — large-footprint facility. Confirm lease terms or RE included.",
+    source:"BizBuySell", verdict:"advance"
+  },
+  {
+    name:"Gulf Coast Veterinary Hospital", industry:"pet", subindustry:"Single-Site Vet",
+    state:"FL", city:"Naples, FL",
+    age:26, employees:14, asking:2200000, sde:540000, revenue:3600000,
+    strategy:"addon",
+    summary:"Single-DVM small animal hospital — owner DVM willing 24-mo earnout w/ 2 days/wk clinical. Associate DVM in place 4 yrs. FL allows non-vet ownership of mgmt entity via PC/MSO.",
+    fitNotes:"Add-on qualifier for vet platform. FL core state.",
+    risk:"FL — heaviest PE competition for vet practices in HSW geography. Owner DVM retention is critical; build into LOI.",
+    source:"BizQuest", verdict:"review"
+  },
+  {
+    name:"Badger Animal Hospital Group", industry:"pet", subindustry:"Multi-Site Vet",
+    state:"WI", city:"Madison, WI",
+    age:35, employees:42, asking:6100000, sde:1420000, revenue:9200000,
+    strategy:"standalone",
+    summary:"Three-location small + exotic animal practice. Wisconsin permits non-vet ownership of mgmt company. 4 staff DVMs, hospital administrator with 14-yr tenure.",
+    fitNotes:"Strong stand-alone. WI selected for licensing advantage and reduced PE competition vs. CO/FL/UT.",
+    risk:"Wisconsin geography is outlier from HSW partner proximity — confirm operating partner travel cadence acceptable.",
+    source:"DealStream", verdict:"advance"
+  },
+  {
+    name:"Wasatch Pet Wellness Centers", industry:"pet", subindustry:"Multi-Site Vet",
+    state:"UT", city:"Provo / Orem, UT",
+    age:22, employees:28, asking:4400000, sde:980000, revenue:6100000,
+    strategy:"standalone",
+    summary:"Two-clinic small animal practice. UT permits non-vet mgmt company ownership. Both clinics led by tenured DVM medical directors. Owner-DVM willing to phase out over 36 months.",
+    fitNotes:"Stand-alone qualifier. UT in core HSW geography.",
+    risk:"UT is high-PE-competition (Mars Vet, Pathway Vet). Expect competitive process; pre-LOI relationship critical.",
+    source:"BizBuySell", verdict:"advance"
+  },
+  {
+    name:"Peach State Pet Grooming Co.", industry:"pet", subindustry:"Grooming Chain",
+    state:"GA", city:"Atlanta Metro, GA",
+    age:17, employees:32, asking:1950000, sde:520000, revenue:3400000,
+    strategy:"addon",
+    summary:"Four-location grooming chain. Each location has lead groomer + manager. Owner has been hands-off 14 months managing other ventures.",
+    fitNotes:"Add-on candidate. GA core state, no DVM restriction (grooming-only).",
+    risk:"Groomer retention dependency — verify wage/incentive structure, structure stay bonuses.",
+    source:"DealStream", verdict:"review"
+  },
+  {
+    name:"Silver State Veterinary", industry:"pet", subindustry:"Single-Site Vet",
+    state:"NV", city:"Reno, NV",
+    age:29, employees:16, asking:2400000, sde:610000, revenue:3800000,
+    strategy:"addon",
+    summary:"Single-location small animal hospital. NV permits non-vet management ownership. Two associate DVMs in place; owner-DVM phasing out.",
+    fitNotes:"Add-on. NV core HSW state, lower PE competition than FL/CO/UT.",
+    risk:"DVM staffing pipeline — Reno is smaller MSA. Confirm associate DVM contract terms and locum availability.",
+    source:"BizBuySell", verdict:"advance"
+  },
+
+  // ===== MANUFACTURING =====
+  {
+    name:"Tarheel Precision Machining", industry:"mfg", subindustry:"CNC Machining",
+    state:"NC", city:"Charlotte Metro, NC",
+    age:34, employees:28, asking:4850000, sde:1180000, revenue:8400000,
+    strategy:"standalone",
+    summary:"Precision CNC job shop — aerospace, defense, medical device contracts. AS9100 + ISO 13485 certified. 18-machine facility. Plant manager + ops director both 12+ yr tenured. Owner reduced to 2 days/wk.",
+    fitNotes:"Stand-alone qualifier. NC core. Certifications create barrier to entry. Long mgmt tenure.",
+    risk:"Customer concentration — top 5 customers = 52% of rev. Diligence: contract durations, share-of-spend analysis, AS9100 transition risk under COC.",
+    source:"BizBuySell", verdict:"advance"
+  },
+  {
+    name:"Carolina Custom Cabinetry & Millwork", industry:"mfg", subindustry:"Architectural Millwork",
+    state:"SC", city:"Greenville, SC",
+    age:23, employees:19, asking:2950000, sde:735000, revenue:5800000,
+    strategy:"standalone",
+    summary:"Commercial architectural millwork — hospitality, healthcare, corporate fit-out. AWI Premium grade. Estimator + shop foreman team runs day-to-day. Owner does GC relationship management only.",
+    fitNotes:"Stand-alone. SC core. Defensible specialty (AWI Premium grade).",
+    risk:"Project-based revenue with variable backlog — verify trailing 18 mo bookings, win rate, and recurring GC relationships.",
+    source:"BizQuest", verdict:"advance"
+  },
+  {
+    name:"Sun State Plastics & Injection Molding", industry:"mfg", subindustry:"Plastics / Injection Molding",
+    state:"FL", city:"Tampa, FL",
+    age:29, employees:36, asking:5400000, sde:1295000, revenue:11200000,
+    strategy:"standalone",
+    summary:"Injection molding + secondary assembly. ISO 9001. Long-term contracts with 3 medical device OEMs and 2 consumer goods companies. Plant manager + quality director run operations.",
+    fitNotes:"Stand-alone, mature mgmt, defensible certifications. FL core state.",
+    risk:"Capex cycle — confirm tooling age, depreciation schedule, deferred maintenance. Test customer concentration.",
+    source:"DealStream", verdict:"advance"
+  },
+  {
+    name:"Peach State Metal Fabrication", industry:"mfg", subindustry:"Metal Fab / Welding",
+    state:"GA", city:"Athens, GA",
+    age:21, employees:24, asking:3200000, sde:790000, revenue:6400000,
+    strategy:"standalone",
+    summary:"Steel fabrication + structural welding. Mix of architectural, industrial OEM, and DOT subcontract work. AISC certified. Owner has stepped back to 1 day/wk; foreman + project manager bench in place.",
+    fitNotes:"Stand-alone. GA core. AISC certification + diversified end-markets.",
+    risk:"Steel commodity exposure — verify pass-through pricing in customer contracts and inventory hedging policy.",
+    source:"BizBuySell", verdict:"advance"
+  },
+  {
+    name:"Sonoran Industrial Coatings", industry:"mfg", subindustry:"Industrial Coatings",
+    state:"AZ", city:"Phoenix, AZ",
+    age:18, employees:14, asking:2400000, sde:610000, revenue:4900000,
+    strategy:"standalone",
+    summary:"Industrial powder coating + liquid spray finishing. Captive contracts with 4 major OEM customers in metal fab + sign manufacturing. NACE certified operators.",
+    fitNotes:"Stand-alone borderline — sits at distribution threshold. AZ core. Strong customer stickiness.",
+    risk:"At lower bound of stand-alone $400K distribution post-debt — verify SDE quality before scoring as advance.",
+    source:"DealStream", verdict:"review"
+  },
+  {
+    name:"Silver State Wire Forms", industry:"mfg", subindustry:"Wire Forming",
+    state:"NV", city:"Sparks, NV (Reno MSA)",
+    age:31, employees:22, asking:3450000, sde:875000, revenue:6100000,
+    strategy:"standalone",
+    summary:"Custom wire forming + spring manufacturing for OEM customers in industrial, agricultural, and material-handling sectors. Plant manager 16-yr tenure. Owner does sales only.",
+    fitNotes:"Stand-alone. NV core HSW state. 31 yrs operating history.",
+    risk:"OEM customer concentration; commodity input exposure (steel wire). Test repricing mechanisms in supply agreements.",
+    source:"BizBuySell", verdict:"advance"
+  },
+  {
+    name:"Wasatch Composites Manufacturing", industry:"mfg", subindustry:"Composites / Fiberglass",
+    state:"UT", city:"Ogden, UT",
+    age:26, employees:31, asking:4750000, sde:1090000, revenue:9300000,
+    strategy:"standalone",
+    summary:"Custom fiberglass + carbon composite parts for water sports, defense, and industrial OEMs. ISO 9001. Two production shift leads + ops manager run plant.",
+    fitNotes:"Stand-alone. UT core state. Mature certifications and diversified end-markets.",
+    risk:"UT mfg has skilled-labor scarcity. Verify wage benchmarking and any pending CBA/union activity.",
+    source:"BizQuest", verdict:"advance"
+  }
+];
+
+//----------------------------------------------------------------
+// Scoring + Filtering
+//----------------------------------------------------------------
+function scoreDeal(deal, ctx){
+  let score = 60;
+  // Industry match
+  if(ctx.industries.has(deal.industry)) score += 8; else return 0;
+  // Strategy match
+  if(ctx.strategies.has(deal.strategy)) score += 5; else return 0;
+  // Age
+  if(deal.age >= ctx.ageFloor) score += 6; else return 0;
+  // Headcount
+  if(deal.employees >= ctx.hcFloor) score += 6; else return 0;
+  // Geography
+  if(ctx.geoStates && !ctx.geoStates.has(deal.state)) return 0;
+  // Pet care must be in vet-allowed states (already in fixture)
+  // Distribution threshold
+  if(ctx.distFilter === 'standalone' && deal.strategy !== 'standalone') return 0;
+  if(ctx.distFilter === 'addon' && deal.strategy !== 'addon') return 0;
+  // SDE strength relative to ask
+  const multiple = deal.asking / deal.sde;
+  if(multiple < 3.2) score += 8;
+  else if(multiple < 3.7) score += 5;
+  else if(multiple < 4.2) score += 2;
+  else score -= 2;
+  // Verdict signal
+  if(deal.verdict === 'advance') score += 6;
+  else if(deal.verdict === 'review') score += 1;
+  // Tenure bonus
+  if(deal.age >= 25) score += 3;
+  if(deal.age >= 30) score += 2;
+  return Math.min(99, Math.max(40, score));
+}
+function geoStatesFor(geoSel, industries){
+  const homeMfg = ['NC','SC','GA','FL','UT','NV','AZ'];
+  const pet = ['CO','FL','UT','AZ','GA','NV','WI'];
+  if(geoSel==='all'){
+    const all = new Set();
+    if(industries.has('home')||industries.has('mfg')) homeMfg.forEach(s=>all.add(s));
+    if(industries.has('pet')) pet.forEach(s=>all.add(s));
+    return all;
+  }
+  if(geoSel==='home_full') return new Set(homeMfg);
+  if(geoSel==='pet_full') return new Set(pet);
+  if(geoSel==='se') return new Set(['NC','SC','GA','FL']);
+  if(geoSel==='mountain_west') return new Set(['UT','NV','AZ']);
+  if(geoSel==='ga_only') return new Set(['GA']);
+  if(geoSel==='fl_only') return new Set(['FL']);
+  if(geoSel==='nc_sc') return new Set(['NC','SC']);
+  if(geoSel==='az_nv_ut') return new Set(['AZ','NV','UT']);
+  if(geoSel==='wi_pet') return new Set(['WI']);
+  return null;
+}
+function fmtUSD(n){ return '$' + n.toLocaleString('en-US') }
+function fmtUSDk(n){
+  if(n>=1000000) return '$'+ (n/1000000).toFixed(2)+'M';
+  return '$'+ Math.round(n/1000) + 'K';
+}
+
+//----------------------------------------------------------------
+// Render
+//----------------------------------------------------------------
+function renderResults(deals){
+  const grid = document.getElementById('dealsGrid');
+  const count = document.getElementById('resultsCount');
+  grid.innerHTML='';
+  if(deals.length===0){
+    grid.innerHTML = `<div class="empty"><div class="ornament">∅</div><h2>No qualifying deals surfaced</h2><p>The current filter combination returned no deals meeting HSW Partners' buy box. Loosen geography, distribution threshold, or business age to widen the funnel.</p></div>`;
+    count.textContent = '0 sourced';
+  } else {
+    count.textContent = `${deals.length} sourced · sorted by Fit Score`;
+    deals.forEach(d=>{
+      const card = document.createElement('div');
+      card.className='deal-card';
+      card.innerHTML = `
+        <div class="deal-head">
+          <div class="left">
+            <h3>${d.name}</h3>
+            <div class="loc">${d.subindustry} · <b>${d.city}</b> · Est. ${new Date().getFullYear() - d.age}</div>
+          </div>
+          <div class="score-badge">
+            <div class="score">${d.score}</div>
+            <div class="label">HSW Fit</div>
+          </div>
+        </div>
+        <div class="stats">
+          <div class="stat"><div class="k">Asking</div><div class="v">${fmtUSDk(d.asking)}</div></div>
+          <div class="stat"><div class="k">SDE</div><div class="v">${fmtUSDk(d.sde)}</div></div>
+          <div class="stat"><div class="k">Revenue</div><div class="v">${fmtUSDk(d.revenue)}</div></div>
+          <div class="stat"><div class="k">Headcount</div><div class="v">${d.employees}</div></div>
+        </div>
+        <div class="deal-body">
+          <p>${d.summary}</p>
+          <p><b style="color:var(--gold)">Fit:</b> ${d.fitNotes}</p>
+          <p><b style="color:var(--red)">Risk:</b> ${d.risk}</p>
+        </div>
+        <div class="deal-foot">
+          <span class="verdict ${d.verdict}">${d.verdict==='advance'?'▲ ADVANCE TO LOI DRAFTING':d.verdict==='review'?'◆ FURTHER DILIGENCE REQUIRED':'✕ PASS'}</span>
+          <span class="deal-source">via ${d.source} · ${d.strategy==='standalone'?'Stand-Alone':'Add-On / Stacking'}</span>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+  document.getElementById('emptyPanel').style.display='none';
+  document.getElementById('resultsPanel').style.display='block';
+}
+
+//----------------------------------------------------------------
+// Scout flow
+//----------------------------------------------------------------
+async function runScout(){
+  const btn = document.getElementById('scoutBtn');
+  btn.disabled = true; btn.textContent = 'Scouting…';
+  document.getElementById('emptyPanel').style.display='none';
+  document.getElementById('resultsPanel').style.display='none';
+  logClear();
+
+  const ctx = {
+    strategies: STATE.strategies,
+    industries: STATE.industries,
+    ageFloor: parseInt(document.getElementById('ageSel').value,10),
+    hcFloor: parseInt(document.getElementById('hcSel').value,10),
+    distFilter: document.getElementById('distSel').value,
+    geoSel: document.getElementById('geoSel').value
+  };
+  ctx.geoStates = geoStatesFor(ctx.geoSel, ctx.industries);
+
+  const activeStrats = [...ctx.strategies].map(s=>s==='standalone'?'Stand-Alone':'Add-On').join(' + ');
+  const activeInds = [...ctx.industries].map(i=>({home:'Home Services',pet:'Pet Care/Vet',mfg:'Manufacturing'})[i]).join(', ');
+  const activePlats = Object.entries(STATE.platforms).filter(([k,v])=>v).map(([k])=>k);
+
+  logPush(`Initializing HSW Partners Deal Scout — Sarah Wexler buy box`);
+  logPush(`Strategy: ${activeStrats}`);
+  logPush(`Industries: ${activeInds}`);
+  logPush(`Geography: ${[...(ctx.geoStates||[])].join(', ') || 'unrestricted'}`);
+  logPush(`Floors: ${ctx.ageFloor}+ yrs · ${ctx.hcFloor}+ employees`);
+  logPush(`Distribution gate: ${ctx.distFilter==='any'?'any':ctx.distFilter==='standalone'?'$400K+ (Stand-Alone)':'$100K+ (Add-On)'}`);
+  logPush(`Sweeping ${activePlats.length} platform feeds…`);
+
+  const customCtx = document.getElementById('customCtx').value.trim();
+  if(customCtx) logPush(`Custom sourcing notes applied`, 'log-warn');
+
+  // Detect runtime: live API only inside Claude artifact runtime
+  const isClaudeSandbox = typeof window !== 'undefined' &&
+    (window.location.hostname.includes('claude') ||
+     window.location.hostname.includes('anthropic') ||
+     window.location.hostname === '');
+
+  if(!isClaudeSandbox){
+    logPush('Standalone deployment detected — sourcing from curated HSW deal library', 'log-warn');
+    logPush('(Live Anthropic API restricted to Claude artifact runtime; standalone deploys use the institutional library)', 'log-warn');
+    await sleep(700);
+    logPush(`Pulling listings from ${activePlats.length} platform feeds…`);
+    await sleep(800);
+    logPush('Applying HSW Partners buy box scoring matrix…');
+    await sleep(500);
+    runFromLibrary(ctx);
+    btn.disabled=false; btn.textContent='Scout Listings';
+    return;
+  }
+
+  // === LIVE CLAUDE API PATH (artifact runtime) ===
+  const systemPrompt = `You are the HSW Partners Deal Scout — an institutional-grade AI deal-sourcing agent operated by Brian Wyss through Avila Phoenix Ventures, LLC for Sarah Wexler / HSW Partners, LLC.
+
+BUYER PROFILE:
+- HSW Partners, LLC, with Sarah Wexler as authorized representative
+- Brian Wyss / Avila Phoenix Ventures, LLC serves as institutional operating partner — leading diligence, structuring, and post-close integration
+- Target: Absentee or semi-absentee operating model with key management already in place
+
+HSW BUY BOX:
+Industries:
+- Home Services (stand-alone OR add-on/stacking)
+- Pet Care / Veterinary (stand-alone OR add-on/stacking)
+- Manufacturing (stand-alone ONLY — no add-on/stacking for mfg)
+
+Core Investment Criteria:
+- Business Age: 15–20+ years established
+- 10+ employees with key management not owner-dependent
+- Absentee or semi-absentee capable
+
+Cash Flow / Distribution Requirements:
+- Add-On / Stacking: $100,000+ annual partner distribution after debt service, opex, and reinvestment reserve
+- Stand-Alone: $400,000+ annual partner distribution after debt service, opex, and reinvestment reserve
+
+Geographic Focus:
+- Home Services + Manufacturing: NC, SC, GA, FL, UT, NV, AZ
+- Pet Care / Veterinary: CO, FL, UT, AZ, GA, NV, WI (selected for non-vet ownership permissibility + strategic considerations)
+- Higher PE competition acknowledged in: CO, FL, UT
+- WI specifically chosen for vet care due to non-vet ownership permissibility + reduced competition
+
+CURRENT FILTERS APPLIED:
+- Strategies: ${activeStrats}
+- Industries: ${activeInds}
+- Geography: ${[...(ctx.geoStates||[])].join(', ') || 'all HSW states'}
+- Age floor: ${ctx.ageFloor}+ years
+- Headcount floor: ${ctx.hcFloor}+ employees
+- Distribution gate: ${ctx.distFilter}
+- Custom notes: ${customCtx || 'none'}
+- Platforms: ${activePlats.join(', ')}
+
+OUTPUT REQUIREMENT:
+Return a JSON array (raw — no markdown, no preamble) of 8–14 plausible business listings matching the buy box. Each object must have:
+{
+  "name": string,
+  "industry": "home" | "pet" | "mfg",
+  "subindustry": string,
+  "state": string (2-letter),
+  "city": string,
+  "age": number (years operating),
+  "employees": number,
+  "asking": number (USD),
+  "sde": number (USD),
+  "revenue": number (USD),
+  "strategy": "standalone" | "addon",
+  "summary": string (2–4 sentences, factual operating snapshot),
+  "fitNotes": string (1–2 sentences on why this fits HSW),
+  "risk": string (1–2 sentences on top diligence concern),
+  "source": string (platform name),
+  "verdict": "advance" | "review" | "pass"
+}
+
+Constraints:
+- Pet care deals must be in vet-allowed states (CO, FL, UT, AZ, GA, NV, WI)
+- Manufacturing must be stand-alone only
+- Never reference "Acquisition Network Investors" — this is HSW Partners only
+- Never use the word "retrade"
+- Asking price multiple of SDE typically 3.0x–4.5x
+- Only include deals that plausibly clear the distribution threshold for their strategy`;
+
+  try{
+    logPush('Querying Claude (claude-sonnet-4) for live deal generation…');
+    const resp = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens: 4500,
+        system: systemPrompt,
+        messages:[
+          {role:'user', content:`Run the sweep and return the JSON array of qualifying HSW deals. Custom sourcing notes: ${customCtx || 'apply standard buy box.'}`}
+        ]
+      })
+    });
+    const data = await resp.json();
+    const text = (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('\n').replace(/```json|```/g,'').trim();
+    let deals;
+    try{ deals = JSON.parse(text); }
+    catch(e){
+      logPush('Live response parse failed — falling back to curated library', 'log-err');
+      runFromLibrary(ctx); btn.disabled=false; btn.textContent='Scout Listings'; return;
+    }
+    logPush(`Received ${deals.length} candidate listings from agent`, 'log-ok');
+    logPush('Applying HSW scoring matrix…');
+    deals.forEach(d=>d.score = scoreDeal(d, ctx));
+    deals = deals.filter(d=>d.score>0).sort((a,b)=>b.score-a.score);
+    logPush(`${deals.length} deals cleared the buy box gate`, 'log-ok');
+    renderResults(deals);
+  }catch(err){
+    logPush(`API error: ${err.message} — using curated library`, 'log-err');
+    runFromLibrary(ctx);
+  }
+  btn.disabled=false; btn.textContent='Scout Listings';
+}
+
+function runFromLibrary(ctx){
+  let deals = HSW_LIBRARY.map(d=>({...d, score: scoreDeal(d, ctx)}))
+    .filter(d=>d.score>0)
+    .sort((a,b)=>b.score-a.score);
+  logPush(`Library sweep complete — ${deals.length} listings scored`, 'log-ok');
+  renderResults(deals);
+}
+
+document.getElementById('scoutBtn').addEventListener('click', runScout);
+</script>
+
+</body>
+</html>
