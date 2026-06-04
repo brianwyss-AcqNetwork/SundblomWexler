@@ -3,6 +3,10 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+<meta name="hsw-scout-version" content="v3.0-live-sourcing-2026-05-13" />
 <title>HSW Partners Deal Scout · Sarah Wexler</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -295,6 +299,24 @@
   .verdict.review{color:var(--amber)}
   .verdict.pass{color:var(--red)}
   .deal-source{color:var(--muted);font-style:italic}
+  .deal-foot-right{display:flex;align-items:center;gap:14px}
+  a.nda-btn{
+    display:inline-flex;align-items:center;gap:7px;
+    padding:7px 14px;
+    background:linear-gradient(180deg, var(--gold-bright) 0%, var(--gold) 100%);
+    color:var(--navy-deep);
+    text-decoration:none;border-radius:2px;
+    font-family:'Inter',sans-serif;font-weight:700;font-size:10.5px;
+    letter-spacing:1.4px;text-transform:uppercase;
+    box-shadow:0 2px 8px rgba(201,164,76,0.3), inset 0 1px 0 rgba(255,255,255,0.4);
+    transition:transform 0.1s, box-shadow 0.18s;
+    white-space:nowrap;
+  }
+  a.nda-btn:hover{
+    transform:translateY(-1px);
+    box-shadow:0 4px 14px rgba(201,164,76,0.45);
+  }
+  a.nda-btn .icon{font-size:11px;line-height:1}
 
   /* BUYBOX BANNER */
   .buybox{
@@ -346,7 +368,7 @@
       <span>Operating Partner: <b>Brian Wyss · Avila Phoenix Ventures, LLC</b></span>
       <span>Strategy: <b>Stand-Alone + Add-On / Stacking</b></span>
     </div>
-    <div class="right">v1.0 · May 2026</div>
+    <div class="right">v3.0 · Live Sourcing Only</div>
   </div>
 </header>
 
@@ -377,7 +399,7 @@
       <label>Target Industries</label>
       <div class="pill-row" id="industryPills">
         <span class="pill on" data-i="home">Home Services</span>
-        <span class="pill on" data-i="pet">Pet Care / Vet</span>
+        <span class="pill on" data-i="pet">Pet Services (no vet)</span>
         <span class="pill on" data-i="mfg">Manufacturing</span>
       </div>
     </div>
@@ -485,7 +507,7 @@
       <div class="grid">
         <div>
           <b>Industries</b>
-          Home Services (SA + AO), Pet Care / Veterinary (SA + AO), Manufacturing (SA only)
+          Home Services (SA + AO), Pet Services — boarding/daycare/grooming/training, no vet medicine (SA + AO), Manufacturing (SA only)
         </div>
         <div>
           <b>Core Criteria</b>
@@ -500,8 +522,8 @@
           NC · SC · GA · FL · UT · NV · AZ
         </div>
         <div>
-          <b>Pet Care States</b>
-          CO · FL · UT · AZ · GA · NV · WI
+          <b>Pet Services States</b>
+          CO · FL · UT · AZ · GA · NV · WI (no vet medicine)
         </div>
         <div>
           <b>Notes</b>
@@ -743,55 +765,15 @@ const HSW_LIBRARY = [
     source:"BizBuySell", verdict:"advance"
   },
 
-  // ===== PET CARE / VETERINARY =====
-  {
-    name:"Mile High Veterinary Group", industry:"pet", subindustry:"Multi-Site Vet",
-    state:"CO", city:"Denver Metro, CO",
-    age:32, employees:38, asking:5200000, sde:1280000, revenue:7800000,
-    strategy:"standalone",
-    summary:"Two-location small animal practice. CO permits non-vet ownership of practice management entity (PC/MSO structure). Medical Director with 11-yr tenure. Average client tenure 7.2 years.",
-    fitNotes:"Strong stand-alone vet qualifier — multi-site, mature, MSO-friendly state. Distribution well above $400K floor.",
-    risk:"CO is high-PE-competition market (NVA, Mars Vet, BluePearl active). Bid discipline mandatory; structure with seller carry to bridge gap.",
-    source:"DealStream", verdict:"advance"
-  },
+  // ===== PET SERVICES (NO VET MEDICINE) =====
   {
     name:"Phoenix Pet Resort & Boarding", industry:"pet", subindustry:"Boarding / Daycare",
     state:"AZ", city:"Scottsdale, AZ",
     age:18, employees:24, asking:2850000, sde:680000, revenue:3900000,
     strategy:"standalone",
     summary:"32,000 sq ft pet resort — boarding, daycare, grooming. Owner-operator semi-absent (3 days/wk). GM runs facility; head trainer + grooming lead in place.",
-    fitNotes:"AZ core state, no DVM ownership restriction (non-medical pet care). 18 yrs > floor.",
+    fitNotes:"AZ core state. Non-medical pet services — no DVM ownership restriction. 18 yrs > floor.",
     risk:"Real estate must be evaluated separately — large-footprint facility. Confirm lease terms or RE included.",
-    source:"BizBuySell", verdict:"advance"
-  },
-  {
-    name:"Gulf Coast Veterinary Hospital", industry:"pet", subindustry:"Single-Site Vet",
-    state:"FL", city:"Naples, FL",
-    age:26, employees:14, asking:2200000, sde:540000, revenue:3600000,
-    strategy:"addon",
-    summary:"Single-DVM small animal hospital — owner DVM willing 24-mo earnout w/ 2 days/wk clinical. Associate DVM in place 4 yrs. FL allows non-vet ownership of mgmt entity via PC/MSO.",
-    fitNotes:"Add-on qualifier for vet platform. FL core state.",
-    risk:"FL — heaviest PE competition for vet practices in HSW geography. Owner DVM retention is critical; build into LOI.",
-    source:"BizQuest", verdict:"review"
-  },
-  {
-    name:"Badger Animal Hospital Group", industry:"pet", subindustry:"Multi-Site Vet",
-    state:"WI", city:"Madison, WI",
-    age:35, employees:42, asking:6100000, sde:1420000, revenue:9200000,
-    strategy:"standalone",
-    summary:"Three-location small + exotic animal practice. Wisconsin permits non-vet ownership of mgmt company. 4 staff DVMs, hospital administrator with 14-yr tenure.",
-    fitNotes:"Strong stand-alone. WI selected for licensing advantage and reduced PE competition vs. CO/FL/UT.",
-    risk:"Wisconsin geography is outlier from HSW partner proximity — confirm operating partner travel cadence acceptable.",
-    source:"DealStream", verdict:"advance"
-  },
-  {
-    name:"Wasatch Pet Wellness Centers", industry:"pet", subindustry:"Multi-Site Vet",
-    state:"UT", city:"Provo / Orem, UT",
-    age:22, employees:28, asking:4400000, sde:980000, revenue:6100000,
-    strategy:"standalone",
-    summary:"Two-clinic small animal practice. UT permits non-vet mgmt company ownership. Both clinics led by tenured DVM medical directors. Owner-DVM willing to phase out over 36 months.",
-    fitNotes:"Stand-alone qualifier. UT in core HSW geography.",
-    risk:"UT is high-PE-competition (Mars Vet, Pathway Vet). Expect competitive process; pre-LOI relationship critical.",
     source:"BizBuySell", verdict:"advance"
   },
   {
@@ -800,19 +782,39 @@ const HSW_LIBRARY = [
     age:17, employees:32, asking:1950000, sde:520000, revenue:3400000,
     strategy:"addon",
     summary:"Four-location grooming chain. Each location has lead groomer + manager. Owner has been hands-off 14 months managing other ventures.",
-    fitNotes:"Add-on candidate. GA core state, no DVM restriction (grooming-only).",
+    fitNotes:"Add-on candidate. GA core state. Pure grooming — no veterinary medicine.",
     risk:"Groomer retention dependency — verify wage/incentive structure, structure stay bonuses.",
     source:"DealStream", verdict:"review"
   },
   {
-    name:"Silver State Veterinary", industry:"pet", subindustry:"Single-Site Vet",
-    state:"NV", city:"Reno, NV",
-    age:29, employees:16, asking:2400000, sde:610000, revenue:3800000,
+    name:"Carolina Canine Country Club", industry:"pet", subindustry:"Boarding + Daycare",
+    state:"NC", city:"Charlotte Metro, NC",
+    age:21, employees:18, asking:2150000, sde:545000, revenue:2900000,
     strategy:"addon",
-    summary:"Single-location small animal hospital. NV permits non-vet management ownership. Two associate DVMs in place; owner-DVM phasing out.",
-    fitNotes:"Add-on. NV core HSW state, lower PE competition than FL/CO/UT.",
-    risk:"DVM staffing pipeline — Reno is smaller MSA. Confirm associate DVM contract terms and locum availability.",
+    summary:"Established Charlotte-area boarding (68 runs) + daycare (50/day capacity) facility. Two shift supervisors run day-to-day; owner reduced to 2 days/wk sales role 14 months ago.",
+    fitNotes:"Add-on qualifier. NC core state. Non-medical pet services. Mature operating model.",
+    risk:"Charlotte market has growing PE-backed competition (Camp Bow Wow, Dogtopia). Verify customer churn and repeat boarding rate.",
     source:"BizBuySell", verdict:"advance"
+  },
+  {
+    name:"Sunshine Pet Lodge & Spa", industry:"pet", subindustry:"Full-Service Pet Resort",
+    state:"FL", city:"Jacksonville, FL",
+    age:23, employees:28, asking:3250000, sde:820000, revenue:4300000,
+    strategy:"standalone",
+    summary:"Boarding, daycare, grooming, and training in 26,000 sq ft facility. 95 boarding suites, 70-dog daycare. GM with 9-yr tenure plus head trainer + grooming lead. Owner-operator stepped back 18 months ago.",
+    fitNotes:"Stand-alone qualifier. FL core state. Full-service pet resort — no vet medicine. Mature mgmt structure.",
+    risk:"FL pet services has visible PE consolidation pressure. Verify pricing power and lease terms on the 26K sq ft facility.",
+    source:"BizQuest", verdict:"advance"
+  },
+  {
+    name:"Silver State K9 Academy", industry:"pet", subindustry:"Training + Boarding",
+    state:"NV", city:"Reno, NV",
+    age:19, employees:14, asking:1650000, sde:425000, revenue:2250000,
+    strategy:"addon",
+    summary:"Board-and-train specialist plus boarding overflow. 4-week residency training programs at $4,200/dog. 32 boarding runs. Head trainer + 3 assistants. Owner trains marquee clients only.",
+    fitNotes:"Add-on with specialty board-and-train differentiation. NV core state. Premium-pricing niche; no vet medicine.",
+    risk:"Trainer retention is mission-critical — verify employment contracts, non-competes, methodology IP. Lumpy program-cycle revenue.",
+    source:"BizBuySell", verdict:"review"
   },
 
   // ===== MANUFACTURING =====
@@ -1270,7 +1272,10 @@ function renderResults(deals){
         </div>
         <div class="deal-foot">
           <span class="verdict ${d.verdict}">${d.verdict==='advance'?'▲ ADVANCE TO LOI DRAFTING':d.verdict==='review'?'◆ FURTHER DILIGENCE REQUIRED':'✕ PASS'}</span>
-          <span class="deal-source">via ${d.source} · ${d.strategy==='standalone'?'Stand-Alone':'Add-On / Stacking'}</span>
+          <div class="deal-foot-right">
+            <span class="deal-source">via ${d.source} · ${d.strategy==='standalone'?'Stand-Alone':'Add-On / Stacking'}</span>
+            ${d.listingUrl ? `<a class="nda-btn" href="${d.listingUrl}" target="_blank" rel="noopener noreferrer"><span class="icon">↗</span> Request NDA</a>` : ''}
+          </div>
         </div>
       `;
       grid.appendChild(card);
@@ -1304,7 +1309,7 @@ async function runScout(){
   ctx.geoStates = isPet ? geoStatesForPet(ctx.geoSel) : geoStatesFor(ctx.geoSel, ctx.industries);
 
   const activeStrats = [...ctx.strategies].map(s=>s==='standalone'?'Stand-Alone':'Add-On').join(' + ');
-  const activeInds = [...ctx.industries].map(i=>({home:'Home Services',pet:'Pet Care/Vet',mfg:'Manufacturing'})[i]).join(', ');
+  const activeInds = [...ctx.industries].map(i=>({home:'Home Services',pet:'Pet Services (no vet)',mfg:'Manufacturing'})[i]).join(', ');
   const activePetServices = [...ctx.petServices].map(s=>({boarding:'Boarding',daycare:'Daycare',grooming:'Grooming',training:'Training'})[s]).join(', ');
   const activePlats = Object.entries(STATE.platforms).filter(([k,v])=>v).map(([k])=>k);
 
@@ -1329,6 +1334,13 @@ async function runScout(){
   const WORKER_ENDPOINT = 'https://hsw-scout.wyssbk.workers.dev';
 
   const systemPrompt = isPet ? `You are the HSW Partners Deal Scout (Pet Boarding Mandate) — an institutional-grade AI deal-sourcing agent operated by Brian Wyss through Avila Phoenix Ventures, LLC for Sarah Wexler / HSW Partners, LLC.
+
+CRITICAL OPERATING MODE: LIVE SOURCING ONLY
+- You MUST use the web_search tool to find REAL, CURRENT business-for-sale listings
+- Never fabricate, estimate, or hallucinate listings — every deal returned must come from actual search results
+- Every deal MUST include a "listingUrl" pointing to the real listing detail page you found
+- If you cannot find listings that match the mandate after thorough searching, return an empty JSON array [] — do not invent placeholder deals
+- It is far better to return 2 verified live deals than 10 fabricated ones
 
 BUYER PROFILE:
 - HSW Partners, LLC, with Sarah Wexler as authorized representative
@@ -1357,10 +1369,20 @@ Cash Flow / Distribution Requirements:
 Geographic Focus (9 states):
 FL, GA, SC, NC, TX, NM, AZ, CA, NV
 
-Sub-regions:
-- Southeast: FL, GA, SC, NC
-- Southwest: TX, NM, AZ
-- West Coast: CA, NV
+SEARCH STRATEGY:
+Run multiple targeted web searches across these sources:
+- "pet boarding business for sale [state]" on BizBuySell
+- "dog daycare for sale [state]" on BizQuest
+- "pet resort for sale [state]" on DealStream
+- "dog grooming business for sale [state]" on BizBuySell
+- "dog training business for sale [state]" on BizQuest
+- site:bizbuysell.com pet boarding [state]
+- site:bizquest.com pet daycare [state]
+- site:dealstream.com pet resort
+
+Run at least 4–8 distinct searches across the target states before assembling your output.
+
+For each listing you find, verify it is currently active (not "sold" or archived) and extract real data points from the listing page.
 
 CURRENT FILTERS APPLIED:
 - Strategies: ${activeStrats}
@@ -1373,34 +1395,45 @@ CURRENT FILTERS APPLIED:
 - Platforms: ${activePlats.join(', ')}
 
 OUTPUT REQUIREMENT:
-Return a JSON array (raw — no markdown, no preamble) of 8–14 plausible pet boarding business listings matching the mandate. Each object must have:
+After completing your searches, return a JSON array (raw — no markdown, no preamble, no explanatory text before or after) of the qualifying LIVE listings you found. If zero qualify, return [].
+
+Each object must have:
 {
-  "name": string,
+  "name": string (business name as listed),
   "subindustry": string (e.g. "Full-Service Pet Resort", "Boarding + Daycare", "Daycare + Training"),
   "services": array of strings (subset of: "boarding", "daycare", "grooming", "training"),
   "state": string (2-letter, must be in target 9),
   "city": string,
-  "age": number,
-  "employees": number,
-  "asking": number,
-  "sde": number,
-  "revenue": number,
+  "age": number (years operating — if not stated, omit the deal),
+  "employees": number (if not stated, omit the deal),
+  "asking": number (USD; if "undisclosed" or not given, omit the deal),
+  "sde": number (USD; if not stated, omit the deal),
+  "revenue": number (USD; if not stated, omit the deal),
   "strategy": "standalone" | "addon",
-  "summary": string (2–4 sentences),
-  "fitNotes": string (1–2 sentences on HSW fit),
-  "risk": string (1–2 sentences on diligence concern),
-  "source": string (platform name),
+  "summary": string (2–4 sentences pulled from listing description, paraphrased not quoted),
+  "fitNotes": string (1–2 sentences on HSW fit — your analysis),
+  "risk": string (1–2 sentences on diligence concern — your analysis),
+  "source": string (platform name: "BizBuySell" / "BizQuest" / "DealStream" / "LoopNet"),
+  "listingUrl": string (the FULL https:// URL to the listing detail page where an NDA can be requested),
   "verdict": "advance" | "review" | "pass"
 }
 
 Constraints:
+- Every deal must have a real, complete listingUrl from your search results
 - All deals must be in FL, GA, SC, NC, TX, NM, AZ, CA, or NV
 - NO veterinary medicine — pure pet services only
 - "services" array must contain only: boarding, daycare, grooming, training
+- Omit any deal where age, employees, asking, SDE, or revenue are not disclosed
 - Never reference "Acquisition Network Investors"
 - Never use the word "retrade"
-- Asking multiple typically 3.0x–4.5x SDE
 - Only include deals that plausibly clear the distribution floor for their strategy` : `You are the HSW Partners Deal Scout — an institutional-grade AI deal-sourcing agent operated by Brian Wyss through Avila Phoenix Ventures, LLC for Sarah Wexler / HSW Partners, LLC.
+
+CRITICAL OPERATING MODE: LIVE SOURCING ONLY
+- You MUST use the web_search tool to find REAL, CURRENT business-for-sale listings
+- Never fabricate, estimate, or hallucinate listings — every deal returned must come from actual search results
+- Every deal MUST include a "listingUrl" pointing to the real listing detail page you found
+- If you cannot find listings that match the buy box after thorough searching, return an empty JSON array [] — do not invent placeholder deals
+- It is far better to return 2 verified live deals than 10 fabricated ones
 
 BUYER PROFILE:
 - HSW Partners, LLC, with Sarah Wexler as authorized representative
@@ -1410,7 +1443,7 @@ BUYER PROFILE:
 HSW BUY BOX:
 Industries:
 - Home Services (stand-alone OR add-on/stacking)
-- Pet Care / Veterinary (stand-alone OR add-on/stacking)
+- Pet Services — boarding, daycare, grooming, training; NO veterinary medicine (stand-alone OR add-on/stacking)
 - Manufacturing (stand-alone ONLY — no add-on/stacking for mfg)
 
 Core Investment Criteria:
@@ -1424,9 +1457,24 @@ Cash Flow / Distribution Requirements:
 
 Geographic Focus:
 - Home Services + Manufacturing: NC, SC, GA, FL, UT, NV, AZ
-- Pet Care / Veterinary: CO, FL, UT, AZ, GA, NV, WI (selected for non-vet ownership permissibility + strategic considerations)
+- Pet Services (no vet): CO, FL, UT, AZ, GA, NV, WI
 - Higher PE competition acknowledged in: CO, FL, UT
-- WI specifically chosen for vet care due to non-vet ownership permissibility + reduced competition
+
+SEARCH STRATEGY:
+Run multiple targeted web searches across these sources for the industries you're tasked with:
+- "[industry] business for sale [state]" on BizBuySell
+- "[industry] for sale [state]" on BizQuest, DealStream
+- site:bizbuysell.com [industry] [state]
+- site:bizquest.com [industry] [state]
+- site:dealstream.com [industry] [state]
+
+Home services examples: HVAC, plumbing, electrical, pest control, lawn care, roofing, garage door, pool service
+Pet services examples: pet boarding, dog daycare, pet resort, pet grooming, dog training
+Manufacturing examples: CNC machining, metal fabrication, injection molding, custom millwork, industrial coatings
+
+Run at least 4–8 distinct searches before assembling your output.
+
+For each listing you find, verify it is currently active (not "sold" or archived) and extract real data points from the listing page.
 
 CURRENT FILTERS APPLIED:
 - Strategies: ${activeStrats}
@@ -1439,84 +1487,130 @@ CURRENT FILTERS APPLIED:
 - Platforms: ${activePlats.join(', ')}
 
 OUTPUT REQUIREMENT:
-Return a JSON array (raw — no markdown, no preamble) of 8–14 plausible business listings matching the buy box. Each object must have:
+After completing your searches, return a JSON array (raw — no markdown, no preamble, no explanatory text before or after) of the qualifying LIVE listings you found. If zero qualify, return [].
+
+Each object must have:
 {
-  "name": string,
+  "name": string (business name as listed),
   "industry": "home" | "pet" | "mfg",
   "subindustry": string,
   "state": string (2-letter),
   "city": string,
-  "age": number (years operating),
-  "employees": number,
-  "asking": number (USD),
-  "sde": number (USD),
-  "revenue": number (USD),
+  "age": number (years operating — if not stated, omit the deal),
+  "employees": number (if not stated, omit the deal),
+  "asking": number (USD; if "undisclosed" or not given, omit the deal),
+  "sde": number (USD; if not stated, omit the deal),
+  "revenue": number (USD; if not stated, omit the deal),
   "strategy": "standalone" | "addon",
-  "summary": string (2–4 sentences, factual operating snapshot),
+  "summary": string (2–4 sentences pulled from listing description, paraphrased not quoted),
   "fitNotes": string (1–2 sentences on why this fits HSW),
   "risk": string (1–2 sentences on top diligence concern),
-  "source": string (platform name),
+  "source": string (platform name: "BizBuySell" / "BizQuest" / "DealStream" / "LoopNet"),
+  "listingUrl": string (the FULL https:// URL to the listing detail page where an NDA can be requested),
   "verdict": "advance" | "review" | "pass"
 }
 
 Constraints:
-- Pet care deals must be in vet-allowed states (CO, FL, UT, AZ, GA, NV, WI)
+- Every deal must have a real, complete listingUrl from your search results
+- Pet services deals: pure pet services only (boarding, daycare, grooming, training) — NO veterinary medicine
+- Pet services deals must be in: CO, FL, UT, AZ, GA, NV, WI
 - Manufacturing must be stand-alone only
+- Omit any deal where age, employees, asking, SDE, or revenue are not disclosed
 - Never reference "Acquisition Network Investors" — this is HSW Partners only
 - Never use the word "retrade"
-- Asking price multiple of SDE typically 3.0x–4.5x
 - Only include deals that plausibly clear the distribution threshold for their strategy`;
 
   const userMsg = isPet
-    ? `Run the sweep and return the JSON array of qualifying pet boarding deals. Custom sourcing notes: ${customCtx || 'apply standard mandate.'}`
-    : `Run the sweep and return the JSON array of qualifying HSW deals. Custom sourcing notes: ${customCtx || 'apply standard buy box.'}`;
+    ? `Run a thorough sweep of business-for-sale listing platforms for currently active pet boarding mandate deals in FL, GA, SC, NC, TX, NM, AZ, CA, NV. Use web_search aggressively. Return the JSON array of qualifying LIVE listings with verified listingUrls. If zero qualify, return []. Custom sourcing notes: ${customCtx || 'apply standard mandate.'}`
+    : `Run a thorough sweep of business-for-sale listing platforms for currently active HSW buy box deals. Use web_search aggressively across the target industries and states. Return the JSON array of qualifying LIVE listings with verified listingUrls. If zero qualify, return []. Custom sourcing notes: ${customCtx || 'apply standard buy box.'}`;
 
   try{
-    logPush('Querying Claude via Cloudflare Worker proxy…');
+    logPush('Querying Claude via Cloudflare Worker proxy (live web search)…');
+    logPush('Searching listing platforms — this may take 30-60 seconds…', 'log-warn');
     const resp = await fetch(WORKER_ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-sonnet-4-5',
-        max_tokens: 4500,
+        max_tokens: 8000,
         system: systemPrompt,
+        tools: [
+          { type: 'web_search_20250305', name: 'web_search', max_uses: 10 }
+        ],
         messages: [
           { role: 'user', content: userMsg }
         ]
       })
     });
     if(!resp.ok){
-      logPush(`Worker returned ${resp.status} — falling back to curated library`, 'log-warn');
-      runFromLibrary(ctx); btn.disabled=false; btn.textContent='Scout Listings'; return;
+      const errText = await resp.text();
+      logPush(`Worker returned ${resp.status}: ${errText.slice(0,200)}`, 'log-err');
+      renderEmpty('Worker proxy returned an error. Live sourcing unavailable — try again in a moment.');
+      btn.disabled=false; btn.textContent='Scout Listings'; return;
     }
     const data = await resp.json();
-    const text = (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('\n').replace(/```json|```/g,'').trim();
-    let deals;
-    try{ deals = JSON.parse(text); }
-    catch(e){
-      logPush('Live response parse failed — falling back to curated library', 'log-err');
-      runFromLibrary(ctx); btn.disabled=false; btn.textContent='Scout Listings'; return;
+
+    // Count search calls Claude made
+    const searchCalls = (data.content||[]).filter(b=>b.type==='server_tool_use' || b.type==='tool_use').length;
+    if(searchCalls > 0) logPush(`Claude performed ${searchCalls} web search(es)`, 'log-ok');
+
+    // Extract final text block (the JSON array) — find the last text block
+    const textBlocks = (data.content||[]).filter(b=>b.type==='text').map(b=>b.text);
+    const text = textBlocks.join('\n').replace(/```json|```/g,'').trim();
+
+    // Try to find the JSON array in the response — Claude may include reasoning before/after
+    let deals = [];
+    try{
+      // Look for the first [ ... ] block in the text
+      const arrayMatch = text.match(/\[[\s\S]*\]/);
+      const jsonText = arrayMatch ? arrayMatch[0] : text;
+      deals = JSON.parse(jsonText);
+      if(!Array.isArray(deals)) throw new Error('not an array');
+    }catch(e){
+      logPush('Could not parse JSON array from live response', 'log-err');
+      logPush('Raw response preview: ' + text.slice(0,200), 'log-err');
+      renderEmpty('Live sourcing completed but the response could not be parsed. Try again.');
+      btn.disabled=false; btn.textContent='Scout Listings'; return;
     }
-    logPush(`Received ${deals.length} candidate listings from live agent`, 'log-ok');
+
+    // Filter: every deal must have a real listingUrl
+    const initialCount = deals.length;
+    deals = deals.filter(d => d.listingUrl && /^https?:\/\//.test(d.listingUrl));
+    const droppedNoUrl = initialCount - deals.length;
+    if(droppedNoUrl > 0) logPush(`Dropped ${droppedNoUrl} deal(s) without verifiable listingUrl`, 'log-warn');
+
+    logPush(`Received ${deals.length} live verified listing(s)`, deals.length > 0 ? 'log-ok' : 'log-warn');
+
+    if(deals.length === 0){
+      renderEmpty("No live listings matched today's sweep. The market may be quiet for this buy box right now — try widening the geography, lowering the age floor, or running again later.");
+      btn.disabled=false; btn.textContent='Scout Listings'; return;
+    }
+
     logPush(`Applying ${isPet?'Pet Boarding mandate':'HSW'} scoring matrix…`);
     deals.forEach(d=>d.score = scoreDeal(d, ctx));
     deals = deals.filter(d=>d.score>0).sort((a,b)=>b.score-a.score);
-    logPush(`${deals.length} deals cleared the buy box gate`, 'log-ok');
+    logPush(`${deals.length} live deal(s) cleared the buy box gate`, 'log-ok');
     renderResults(deals);
   }catch(err){
-    logPush(`Worker proxy error: ${err.message} — using curated library`, 'log-err');
-    runFromLibrary(ctx);
+    logPush(`Worker proxy error: ${err.message}`, 'log-err');
+    renderEmpty('Could not reach the live sourcing agent. Check your connection and try again.');
   }
   btn.disabled=false; btn.textContent='Scout Listings';
 }
 
+function renderEmpty(message){
+  LAST_RESULTS = [];
+  const exportBtn = document.getElementById('exportCsvBtn');
+  if(exportBtn) exportBtn.disabled = true;
+  document.getElementById('emptyPanel').style.display = 'none';
+  document.getElementById('resultsPanel').style.display = 'block';
+  document.getElementById('resultsCount').textContent = '0 sourced';
+  document.getElementById('dealsGrid').innerHTML = `<div class="empty"><div class="ornament">∅</div><h2>No Live Listings Sourced</h2><p>${message}</p></div>`;
+}
+
 function runFromLibrary(ctx){
-  const library = ctx.mandate === 'petboard' ? PET_BOARDING_LIBRARY : HSW_LIBRARY;
-  let deals = library.map(d=>({...d, score: scoreDeal(d, ctx)}))
-    .filter(d=>d.score>0)
-    .sort((a,b)=>b.score-a.score);
-  logPush(`Library sweep complete — ${deals.length} listings scored`, 'log-ok');
-  renderResults(deals);
+  // Curated library is disabled — Scout operates in live-only mode
+  renderEmpty('Live sourcing only. The curated library has been disabled per mandate settings.');
 }
 
 //----------------------------------------------------------------
@@ -1553,12 +1647,13 @@ function dealsToCSV(deals){
     'Operating Summary',
     'HSW Fit Notes',
     'Top Risk / Diligence Concern',
-    'Listing Source'
+    'Listing Source',
+    'Listing URL (NDA Request)'
   ];
   const currentYear = new Date().getFullYear();
   const verdictLabel = v => v==='advance'?'ADVANCE TO LOI DRAFTING':v==='review'?'FURTHER DILIGENCE REQUIRED':'PASS';
   const indLabel = (d) => {
-    if(d.industry) return ({home:'Home Services',pet:'Pet Care / Veterinary',mfg:'Manufacturing'})[d.industry] || d.industry;
+    if(d.industry) return ({home:'Home Services',pet:'Pet Services (no vet)',mfg:'Manufacturing'})[d.industry] || d.industry;
     if(d.services && d.services.length){
       const cat = d.services.map(s=>s.charAt(0).toUpperCase()+s.slice(1)).join(' + ');
       return `Pet Services (${cat})`;
@@ -1586,7 +1681,8 @@ function dealsToCSV(deals){
     d.summary,
     d.fitNotes,
     d.risk,
-    d.source
+    d.source,
+    d.listingUrl || ''
   ].map(csvEscape).join(','));
 
   // Header banner rows (commented-style metadata at top of CSV)
