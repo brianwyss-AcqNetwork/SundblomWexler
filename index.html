@@ -358,6 +358,14 @@
     <div class="panel-sub">Configure Search Parameters</div>
 
     <div class="field">
+      <label>Mandate</label>
+      <select id="mandateSel">
+        <option value="hsw" selected>HSW Standard Buy Box (3 industries)</option>
+        <option value="petboard">Pet Boarding Mandate (FL/GA/SC/NC/TX/NM/AZ/CA/NV)</option>
+      </select>
+    </div>
+
+    <div class="field">
       <label>Acquisition Strategy</label>
       <div class="pill-row" id="strategyPills">
         <span class="pill on" data-s="standalone">Stand-Alone</span>
@@ -365,7 +373,7 @@
       </div>
     </div>
 
-    <div class="field">
+    <div class="field" id="industriesField">
       <label>Target Industries</label>
       <div class="pill-row" id="industryPills">
         <span class="pill on" data-i="home">Home Services</span>
@@ -374,7 +382,17 @@
       </div>
     </div>
 
-    <div class="field">
+    <div class="field" id="petServicesField" style="display:none">
+      <label>Service Categories</label>
+      <div class="pill-row" id="petServicePills">
+        <span class="pill on" data-ps="boarding">Boarding</span>
+        <span class="pill on" data-ps="daycare">Daycare</span>
+        <span class="pill on" data-ps="grooming">Grooming</span>
+        <span class="pill on" data-ps="training">Training</span>
+      </div>
+    </div>
+
+    <div class="field" id="geoFieldHSW">
       <label>Geographic Scope</label>
       <select id="geoSel">
         <option value="all" selected>All HSW States (industry-aware)</option>
@@ -387,6 +405,22 @@
         <option value="nc_sc">Carolinas — NC, SC</option>
         <option value="az_nv_ut">AZ / NV / UT</option>
         <option value="wi_pet">Wisconsin (pet care only)</option>
+      </select>
+    </div>
+
+    <div class="field" id="geoFieldPet" style="display:none">
+      <label>Geographic Scope</label>
+      <select id="geoSelPet">
+        <option value="all_pet" selected>All Pet Boarding States (9)</option>
+        <option value="se_pet">Southeast — FL, GA, SC, NC</option>
+        <option value="sw_pet">Southwest — TX, NM, AZ</option>
+        <option value="west_pet">West Coast — CA, NV</option>
+        <option value="fl_only_pet">Florida only</option>
+        <option value="tx_only_pet">Texas only</option>
+        <option value="ca_only_pet">California only</option>
+        <option value="ga_only_pet">Georgia only</option>
+        <option value="az_nv_pet">AZ / NV</option>
+        <option value="nc_sc_pet">Carolinas — NC, SC</option>
       </select>
     </div>
 
@@ -446,7 +480,7 @@
   <section class="workbench">
 
     <!-- BUY BOX BANNER -->
-    <div class="buybox">
+    <div class="buybox" id="buyboxHSW">
       <h4>HSW Partners <em>— Sarah Wexler Buy Box</em></h4>
       <div class="grid">
         <div>
@@ -472,6 +506,36 @@
         <div>
           <b>Notes</b>
           Higher PE competition: CO, FL, UT · Remaining states selected for partner proximity / licensing advantages
+        </div>
+      </div>
+    </div>
+
+    <div class="buybox" id="buyboxPet" style="display:none">
+      <h4>HSW Partners <em>— Pet Boarding Mandate</em></h4>
+      <div class="grid">
+        <div>
+          <b>Scope</b>
+          Pet boarding services — Boarding, Daycare, Grooming, Training (no veterinary medicine)
+        </div>
+        <div>
+          <b>Core Criteria</b>
+          15–20+ yrs established · 10+ employees · Key mgmt in place · Absentee / semi-absentee capable
+        </div>
+        <div>
+          <b>Distribution Floor</b>
+          Add-On: $100K+ partner distribution · Stand-Alone: $400K+ partner distribution (post-debt, post-reinvestment reserve)
+        </div>
+        <div>
+          <b>Target States (9)</b>
+          FL · GA · SC · NC · TX · NM · AZ · CA · NV
+        </div>
+        <div>
+          <b>Sub-Regions</b>
+          Southeast: FL, GA, SC, NC · Southwest: TX, NM, AZ · West Coast: CA, NV
+        </div>
+        <div>
+          <b>Notes</b>
+          Non-medical pet services — no DVM ownership restrictions in any target state · PE consolidation noted in FL, CA, TX
         </div>
       </div>
     </div>
@@ -512,13 +576,27 @@
 //================================================================
 
 const STATE = {
+  mandate: 'hsw',  // 'hsw' or 'petboard'
   strategies: new Set(['standalone','addon']),
   industries: new Set(['home','pet','mfg']),
+  petServices: new Set(['boarding','daycare','grooming','training']),
   platforms: { bizbuysell:true, bizquest:true, loopnet:true, dealstream:true,
                bbb:false, acquireco:false, sunbelt:false, murphy:false, vrbb:false }
 };
 
 let LAST_RESULTS = [];
+
+// Mandate switcher
+document.getElementById('mandateSel').addEventListener('change', e=>{
+  STATE.mandate = e.target.value;
+  const isPet = STATE.mandate === 'petboard';
+  document.getElementById('industriesField').style.display = isPet ? 'none' : '';
+  document.getElementById('petServicesField').style.display = isPet ? '' : 'none';
+  document.getElementById('geoFieldHSW').style.display = isPet ? 'none' : '';
+  document.getElementById('geoFieldPet').style.display = isPet ? '' : 'none';
+  document.getElementById('buyboxHSW').style.display = isPet ? 'none' : '';
+  document.getElementById('buyboxPet').style.display = isPet ? '' : 'none';
+});
 
 // Pill toggle handlers
 document.querySelectorAll('#strategyPills .pill').forEach(p=>{
@@ -537,6 +615,15 @@ document.querySelectorAll('#industryPills .pill').forEach(p=>{
       if(STATE.industries.size===1) return;
       STATE.industries.delete(k); p.classList.remove('on');
     } else { STATE.industries.add(k); p.classList.add('on'); }
+  });
+});
+document.querySelectorAll('#petServicePills .pill').forEach(p=>{
+  p.addEventListener('click',()=>{
+    const k = p.dataset.ps;
+    if(STATE.petServices.has(k)){
+      if(STATE.petServices.size===1) return;
+      STATE.petServices.delete(k); p.classList.remove('on');
+    } else { STATE.petServices.add(k); p.classList.add('on'); }
   });
 });
 document.querySelectorAll('#platforms input[type=checkbox]').forEach(cb=>{
@@ -802,12 +889,275 @@ const HSW_LIBRARY = [
 ];
 
 //----------------------------------------------------------------
+// CURATED PET BOARDING MANDATE FALLBACK LIBRARY
+// Pet boarding services across FL, GA, SC, NC, TX, NM, AZ, CA, NV
+// Services: Boarding, Daycare, Grooming, Training (no veterinary medicine)
+//----------------------------------------------------------------
+const PET_BOARDING_LIBRARY = [
+  // ===== FLORIDA =====
+  {
+    name:"Sunshine Pet Resort & Spa", subindustry:"Full-Service Pet Resort",
+    services:["boarding","daycare","grooming"],
+    state:"FL", city:"Naples, FL",
+    age:24, employees:31, asking:3650000, sde:920000, revenue:4800000,
+    strategy:"standalone",
+    summary:"24,000 sq ft pet resort — 110 boarding suites, daycare for 80 dogs/day, four grooming stations. Owner-operator absent 3 days/week; GM with 9-yr tenure runs day-to-day. Average occupancy 78% with seasonal peaks at 95%.",
+    fitNotes:"Stand-alone qualifier — strong $920K SDE clears $400K distribution floor with debt cushion. FL core target state. Mature multi-service model.",
+    risk:"Naples has 3 active PE-backed competitors (Camp Bow Wow, Dogtopia franchisees). Verify route density, repeat customer rate, and lease terms on the 24K sq ft facility.",
+    source:"BizBuySell", verdict:"advance"
+  },
+  {
+    name:"Tampa Bay Bark & Board", subindustry:"Boarding + Daycare",
+    services:["boarding","daycare"],
+    state:"FL", city:"Tampa, FL",
+    age:19, employees:18, asking:2150000, sde:540000, revenue:2800000,
+    strategy:"addon",
+    summary:"Boarding (62 runs) + daycare (40/day capacity) in 14,000 sq ft purpose-built facility. Two location supervisors, owner reduced to sales/marketing 2 days/wk. Real estate available separately.",
+    fitNotes:"Add-on qualifier. Clean operating model, mature management bench. FL target state.",
+    risk:"Customer concentration on snowbird clientele — verify seasonality and Q2 (off-season) cash flow. RE deal structure needs attention.",
+    source:"DealStream", verdict:"advance"
+  },
+  {
+    name:"K9 Academy of Orlando", subindustry:"Training + Daycare",
+    services:["training","daycare"],
+    state:"FL", city:"Orlando, FL",
+    age:16, employees:14, asking:1450000, sde:385000, revenue:2100000,
+    strategy:"addon",
+    summary:"Professional dog training (obedience, behavior modification, board-and-train programs) with attached daycare. Two senior trainers + four daycare attendants. Owner trains 1 day/wk, otherwise hands-off.",
+    fitNotes:"Add-on candidate. Strong training brand recognition in Orlando MSA. Differentiation vs commodity boarding.",
+    risk:"Trainer retention is mission-critical — verify employment contracts, non-competes, certification status. Board-and-train revenue is lumpy.",
+    source:"BizQuest", verdict:"review"
+  },
+
+  // ===== GEORGIA =====
+  {
+    name:"Peachtree Pet Lodge", subindustry:"Boarding + Daycare + Grooming",
+    services:["boarding","daycare","grooming"],
+    state:"GA", city:"Atlanta Metro (Sandy Springs), GA",
+    age:22, employees:24, asking:2950000, sde:725000, revenue:3900000,
+    strategy:"standalone",
+    summary:"Three-decade brand in north Atlanta. 78 boarding suites, 60-dog daycare capacity, three grooming stations. GM with 11-yr tenure; head groomer 14-yr tenure. Owner reduced to financial oversight only.",
+    fitNotes:"Stand-alone qualifier. GA core state. Long-tenured management with deep customer relationships.",
+    risk:"Atlanta has heavy PE consolidation — Camp Bow Wow, Dogtopia, and Best Friends Pet Care all active. Diligence required on customer churn and pricing power.",
+    source:"BizBuySell", verdict:"advance"
+  },
+  {
+    name:"Savannah Coastal Canine", subindustry:"Boarding + Grooming",
+    services:["boarding","grooming"],
+    state:"GA", city:"Savannah, GA",
+    age:17, employees:11, asking:1250000, sde:340000, revenue:1850000,
+    strategy:"addon",
+    summary:"Coastal boarding kennel (48 runs) with full grooming. Tourist + military (Hunter AAF) clientele. Owner stepped back 18 months ago; assistant manager runs operations.",
+    fitNotes:"Add-on candidate for SE platform. GA target state. Lower competition vs Atlanta market.",
+    risk:"Military base BAH-cycle revenue swings; verify civilian customer base retention. Smaller MSA limits exit options.",
+    source:"DealStream", verdict:"review"
+  },
+
+  // ===== SOUTH CAROLINA =====
+  {
+    name:"Lowcountry Pet Resort", subindustry:"Full-Service Pet Resort",
+    services:["boarding","daycare","grooming","training"],
+    state:"SC", city:"Charleston, SC",
+    age:20, employees:27, asking:3250000, sde:810000, revenue:4250000,
+    strategy:"standalone",
+    summary:"All-four-services facility in fast-growing Charleston market. 95 boarding suites, 70-dog daycare, four grooming stations, two-trainer staff. Owner phasing out over 24 months.",
+    fitNotes:"Stand-alone qualifier with full service stack. SC target state with strong demographic tailwinds.",
+    risk:"Charleston population growth driving competitive entrants (3 new facilities in past 36 months). Pricing pressure possible.",
+    source:"BizBuySell", verdict:"advance"
+  },
+  {
+    name:"Upstate Pet Country Club", subindustry:"Boarding + Daycare",
+    services:["boarding","daycare"],
+    state:"SC", city:"Greenville, SC",
+    age:21, employees:15, asking:1850000, sde:475000, revenue:2400000,
+    strategy:"addon",
+    summary:"Suburban Greenville/Spartanburg market. 56 boarding suites, 35-dog daycare. Owner-operator with two shift supervisors. Facility on 4 acres — RE included in deal.",
+    fitNotes:"Add-on. SC target state. RE included reduces lease risk; supports future expansion.",
+    risk:"Owner-operator transition risk — verify customer relationships transfer cleanly; structure earnout if needed.",
+    source:"BizQuest", verdict:"advance"
+  },
+
+  // ===== NORTH CAROLINA =====
+  {
+    name:"Tarheel Tails Pet Center", subindustry:"Boarding + Daycare + Grooming",
+    services:["boarding","daycare","grooming"],
+    state:"NC", city:"Raleigh-Durham, NC",
+    age:23, employees:29, asking:3450000, sde:865000, revenue:4600000,
+    strategy:"standalone",
+    summary:"Three-service facility in RTP corridor. 88 boarding suites, 65-dog daycare, four grooming stations. Tech-park clientele drives weekday daycare. Two location managers, owner does sales only.",
+    fitNotes:"Stand-alone qualifier. NC target state. RTP demographic strength.",
+    risk:"Tech-sector customer base sensitive to layoff cycles — daycare attrition risk in downturn. Verify revenue diversification.",
+    source:"BizBuySell", verdict:"advance"
+  },
+  {
+    name:"Charlotte Canine Club", subindustry:"Daycare + Training",
+    services:["daycare","training"],
+    state:"NC", city:"Charlotte, NC",
+    age:18, employees:16, asking:1750000, sde:445000, revenue:2350000,
+    strategy:"addon",
+    summary:"Urban daycare + training facility, no boarding. 90-dog daily capacity, three trainers. Located in South End — high-density young-professional demographic. Owner reduced to 1 day/wk.",
+    fitNotes:"Add-on candidate. NC target state. Differentiated no-boarding model with strong demographic fit.",
+    risk:"No boarding limits revenue per customer; verify daycare retention and training conversion rate.",
+    source:"DealStream", verdict:"advance"
+  },
+
+  // ===== TEXAS =====
+  {
+    name:"Lone Star Pet Resort", subindustry:"Full-Service Pet Resort",
+    services:["boarding","daycare","grooming","training"],
+    state:"TX", city:"Austin, TX",
+    age:21, employees:33, asking:4150000, sde:1050000, revenue:5400000,
+    strategy:"standalone",
+    summary:"Full-service flagship in Austin tech corridor. 120 boarding suites, 90-dog daycare, six grooming stations, training program. GM + ops director both 8+ yr tenured. Owner exited daily ops 14 months ago.",
+    fitNotes:"Stand-alone qualifier with all-four-service stack. TX target state. Austin demographic + RE appreciation potential.",
+    risk:"Austin market saturation rising — PE activity heavy (Dogtopia, Camp Bow Wow, Best Friends, Bark Avenue). Verify pricing discipline and customer LTV.",
+    source:"BizBuySell", verdict:"advance"
+  },
+  {
+    name:"Houston Heights Pet Lodge", subindustry:"Boarding + Daycare + Grooming",
+    services:["boarding","daycare","grooming"],
+    state:"TX", city:"Houston, TX",
+    age:19, employees:22, asking:2850000, sde:710000, revenue:3700000,
+    strategy:"addon",
+    summary:"Inner-loop Houston facility, 72 boarding suites, 55-dog daycare, four grooming stations. Two location managers in place; owner travels frequently and oversees remotely.",
+    fitNotes:"Add-on qualifier. TX target state. Already semi-absentee operating model — ideal HSW profile.",
+    risk:"Hurricane exposure / facility damage history — verify insurance and recent claims. Flood zone status.",
+    source:"BizQuest", verdict:"advance"
+  },
+  {
+    name:"DFW Doggie Daycare Network", subindustry:"Daycare Multi-Site",
+    services:["daycare","grooming"],
+    state:"TX", city:"Dallas-Fort Worth Metro, TX",
+    age:16, employees:38, asking:3650000, sde:920000, revenue:4900000,
+    strategy:"standalone",
+    summary:"Three-location daycare chain in DFW. Each site has location manager + lead groomer. Centralized admin and marketing. Owner-operator runs central office only.",
+    fitNotes:"Stand-alone. TX target state. Multi-site model already proven — strong platform for further roll-up.",
+    risk:"Three-location operational complexity; verify financials are reported per-site and consolidated cleanly. Lease overlap risk if all leases expire near same date.",
+    source:"BizBuySell", verdict:"advance"
+  },
+
+  // ===== NEW MEXICO =====
+  {
+    name:"Land of Enchantment Pet Lodge", subindustry:"Boarding + Daycare + Grooming",
+    services:["boarding","daycare","grooming"],
+    state:"NM", city:"Albuquerque, NM",
+    age:19, employees:14, asking:1450000, sde:380000, revenue:1950000,
+    strategy:"addon",
+    summary:"Established ABQ facility with 52 boarding suites, 35-dog daycare, two grooming stations. Owner has been hands-off 12 months; manager runs operations.",
+    fitNotes:"Add-on candidate. NM target state with notably reduced PE competition vs. coastal markets.",
+    risk:"NM market is smaller MSA; verify customer LTV and pricing ceiling. Limited exit liquidity in smaller markets.",
+    source:"DealStream", verdict:"review"
+  },
+  {
+    name:"Santa Fe Pet Country", subindustry:"Boarding + Grooming",
+    services:["boarding","grooming"],
+    state:"NM", city:"Santa Fe, NM",
+    age:25, employees:11, asking:1250000, sde:325000, revenue:1700000,
+    strategy:"addon",
+    summary:"Boutique boarding (38 suites) with premium grooming service. Affluent clientele, average daily boarding rate $68 vs market $42. Owner working 2 days/wk; daughter (non-successor) manages operations.",
+    fitNotes:"Add-on with premium-pricing differentiation. NM target state. 25-yr brand equity.",
+    risk:"Affluent niche pricing depends on brand continuity — verify customer retention through ownership transition. Smaller MSA.",
+    source:"BizBuySell", verdict:"advance"
+  },
+
+  // ===== ARIZONA =====
+  {
+    name:"Sonoran Pet Resort", subindustry:"Full-Service Pet Resort",
+    services:["boarding","daycare","grooming","training"],
+    state:"AZ", city:"Scottsdale, AZ",
+    age:22, employees:32, asking:3950000, sde:980000, revenue:5200000,
+    strategy:"standalone",
+    summary:"32,000 sq ft pet resort, 105 boarding suites, 80-dog daycare, six grooming stations, training program. GM 9-yr tenure; head trainer 11-yr tenure. Owner semi-absent 3 days/wk.",
+    fitNotes:"Stand-alone qualifier. AZ target state. All-four-service stack.",
+    risk:"Scottsdale luxury market — PE active. Verify lease (large footprint) and customer concentration on seasonal residents.",
+    source:"BizBuySell", verdict:"advance"
+  },
+  {
+    name:"Desert Paws Boarding", subindustry:"Boarding + Daycare",
+    services:["boarding","daycare"],
+    state:"AZ", city:"Phoenix, AZ",
+    age:17, employees:16, asking:1650000, sde:425000, revenue:2250000,
+    strategy:"addon",
+    summary:"East Phoenix boarding + daycare. 62 boarding runs, 45-dog daycare. Owner-operator transitioning to part-time consulting role; ops manager promoted internally 8 months ago.",
+    fitNotes:"Add-on candidate. AZ target state. Recent transition de-risks ownership change.",
+    risk:"Recent management transition — verify operational metrics have held in past 8 months. Customer churn data critical.",
+    source:"BizQuest", verdict:"advance"
+  },
+
+  // ===== CALIFORNIA =====
+  {
+    name:"Pacific Pet Resort", subindustry:"Full-Service Pet Resort",
+    services:["boarding","daycare","grooming","training"],
+    state:"CA", city:"San Diego, CA",
+    age:24, employees:36, asking:5250000, sde:1280000, revenue:6800000,
+    strategy:"standalone",
+    summary:"Premier San Diego pet resort — 130 boarding suites, 100-dog daycare, seven grooming stations, two trainers. GM + ops director + head trainer all 10+ yr tenured. Owner exited daily ops 24 months ago.",
+    fitNotes:"Stand-alone qualifier with premium pricing power. CA target state. Mature absentee model already proven.",
+    risk:"CA regulatory environment (labor, employment, real estate) requires diligence; verify wage compliance and any pending Cal/OSHA matters. Premium ask multiple (4.1x).",
+    source:"BizBuySell", verdict:"advance"
+  },
+  {
+    name:"Bay Area Doggie Day Camp", subindustry:"Daycare + Training",
+    services:["daycare","training"],
+    state:"CA", city:"East Bay (Walnut Creek), CA",
+    age:18, employees:21, asking:2450000, sde:610000, revenue:3300000,
+    strategy:"addon",
+    summary:"East Bay daycare + training, no boarding. 110-dog daily capacity, three trainers, behavioral specialist on staff. Tech-commuter clientele. Owner reduced to 1 day/wk strategic.",
+    fitNotes:"Add-on. CA target state. Differentiated daycare/training model with premium pricing.",
+    risk:"CA labor cost structure compresses margins — verify wage benchmarking. Tech-sector layoff cycle exposure on daycare retention.",
+    source:"DealStream", verdict:"advance"
+  },
+  {
+    name:"Coastal Canine Academy", subindustry:"Training + Boarding",
+    services:["training","boarding"],
+    state:"CA", city:"Orange County (Costa Mesa), CA",
+    age:20, employees:17, asking:2150000, sde:535000, revenue:2900000,
+    strategy:"addon",
+    summary:"Board-and-train specialist plus standard boarding overflow. 4-week intensive training programs at $4,800/dog. 38 boarding suites. Head trainer + two assistants. Owner trains marquee clients only.",
+    fitNotes:"Add-on with specialty board-and-train differentiation. CA target state. Premium-pricing niche.",
+    risk:"Trainer retention is existential — verify employment contracts, non-competes, methodology IP. Lumpy revenue from 4-wk program cycles.",
+    source:"BizBuySell", verdict:"review"
+  },
+
+  // ===== NEVADA =====
+  {
+    name:"Silver State Pet Lodge", subindustry:"Boarding + Daycare + Grooming",
+    services:["boarding","daycare","grooming"],
+    state:"NV", city:"Las Vegas (Henderson), NV",
+    age:18, employees:23, asking:2650000, sde:670000, revenue:3500000,
+    strategy:"addon",
+    summary:"Henderson facility, 75 boarding suites, 55-dog daycare, four grooming stations. Las Vegas tourist + local commuter clientele mix. Two managers — owner travels frequently.",
+    fitNotes:"Add-on qualifier (borderline standalone). NV target state. Already operating semi-absentee.",
+    risk:"Tourist-driven boarding revenue is convention-cycle sensitive — verify normalized 2024 baseline vs convention boom years. Strip-area facility lease terms.",
+    source:"BizQuest", verdict:"advance"
+  },
+  {
+    name:"Reno Tahoe Pet Resort", subindustry:"Full-Service Pet Resort",
+    services:["boarding","daycare","grooming","training"],
+    state:"NV", city:"Reno, NV",
+    age:21, employees:26, asking:2950000, sde:740000, revenue:3850000,
+    strategy:"standalone",
+    summary:"Reno-Tahoe facility, 82 boarding suites, 60-dog daycare, four grooming stations, training program. Ski-season peak demand. GM 8-yr tenure runs ops; owner is hands-off.",
+    fitNotes:"Stand-alone qualifier. NV target state. Lower PE competition than Vegas market.",
+    risk:"Seasonal demand swings (ski season peak); verify off-season cash flow coverage of fixed costs. Smaller exit market than Vegas.",
+    source:"BizBuySell", verdict:"advance"
+  }
+];
+
+//----------------------------------------------------------------
 // Scoring + Filtering
 //----------------------------------------------------------------
 function scoreDeal(deal, ctx){
   let score = 60;
-  // Industry match
-  if(ctx.industries.has(deal.industry)) score += 8; else return 0;
+  if(ctx.mandate === 'petboard'){
+    // Pet boarding mandate scoring
+    // Service category match — at least one of the deal's services must match
+    if(!deal.services || !deal.services.some(s => ctx.petServices.has(s))) return 0;
+    score += 8;
+  } else {
+    // HSW standard scoring
+    if(ctx.industries.has(deal.industry)) score += 8; else return 0;
+  }
   // Strategy match
   if(ctx.strategies.has(deal.strategy)) score += 5; else return 0;
   // Age
@@ -816,7 +1166,6 @@ function scoreDeal(deal, ctx){
   if(deal.employees >= ctx.hcFloor) score += 6; else return 0;
   // Geography
   if(ctx.geoStates && !ctx.geoStates.has(deal.state)) return 0;
-  // Pet care must be in vet-allowed states (already in fixture)
   // Distribution threshold
   if(ctx.distFilter === 'standalone' && deal.strategy !== 'standalone') return 0;
   if(ctx.distFilter === 'addon' && deal.strategy !== 'addon') return 0;
@@ -832,6 +1181,11 @@ function scoreDeal(deal, ctx){
   // Tenure bonus
   if(deal.age >= 25) score += 3;
   if(deal.age >= 30) score += 2;
+  // Pet boarding bonus: more service categories = stronger platform
+  if(ctx.mandate === 'petboard' && deal.services){
+    if(deal.services.length >= 4) score += 4;
+    else if(deal.services.length === 3) score += 2;
+  }
   return Math.min(99, Math.max(40, score));
 }
 function geoStatesFor(geoSel, industries){
@@ -853,6 +1207,20 @@ function geoStatesFor(geoSel, industries){
   if(geoSel==='az_nv_ut') return new Set(['AZ','NV','UT']);
   if(geoSel==='wi_pet') return new Set(['WI']);
   return null;
+}
+function geoStatesForPet(geoSel){
+  const allPet = ['FL','GA','SC','NC','TX','NM','AZ','CA','NV'];
+  if(geoSel==='all_pet') return new Set(allPet);
+  if(geoSel==='se_pet') return new Set(['FL','GA','SC','NC']);
+  if(geoSel==='sw_pet') return new Set(['TX','NM','AZ']);
+  if(geoSel==='west_pet') return new Set(['CA','NV']);
+  if(geoSel==='fl_only_pet') return new Set(['FL']);
+  if(geoSel==='tx_only_pet') return new Set(['TX']);
+  if(geoSel==='ca_only_pet') return new Set(['CA']);
+  if(geoSel==='ga_only_pet') return new Set(['GA']);
+  if(geoSel==='az_nv_pet') return new Set(['AZ','NV']);
+  if(geoSel==='nc_sc_pet') return new Set(['NC','SC']);
+  return new Set(allPet);
 }
 function fmtUSD(n){ return '$' + n.toLocaleString('en-US') }
 function fmtUSDk(n){
@@ -922,23 +1290,33 @@ async function runScout(){
   document.getElementById('resultsPanel').style.display='none';
   logClear();
 
+  const isPet = STATE.mandate === 'petboard';
   const ctx = {
+    mandate: STATE.mandate,
     strategies: STATE.strategies,
     industries: STATE.industries,
+    petServices: STATE.petServices,
     ageFloor: parseInt(document.getElementById('ageSel').value,10),
     hcFloor: parseInt(document.getElementById('hcSel').value,10),
     distFilter: document.getElementById('distSel').value,
-    geoSel: document.getElementById('geoSel').value
+    geoSel: isPet ? document.getElementById('geoSelPet').value : document.getElementById('geoSel').value
   };
-  ctx.geoStates = geoStatesFor(ctx.geoSel, ctx.industries);
+  ctx.geoStates = isPet ? geoStatesForPet(ctx.geoSel) : geoStatesFor(ctx.geoSel, ctx.industries);
 
   const activeStrats = [...ctx.strategies].map(s=>s==='standalone'?'Stand-Alone':'Add-On').join(' + ');
   const activeInds = [...ctx.industries].map(i=>({home:'Home Services',pet:'Pet Care/Vet',mfg:'Manufacturing'})[i]).join(', ');
+  const activePetServices = [...ctx.petServices].map(s=>({boarding:'Boarding',daycare:'Daycare',grooming:'Grooming',training:'Training'})[s]).join(', ');
   const activePlats = Object.entries(STATE.platforms).filter(([k,v])=>v).map(([k])=>k);
 
-  logPush(`Initializing HSW Partners Deal Scout — Sarah Wexler buy box`);
-  logPush(`Strategy: ${activeStrats}`);
-  logPush(`Industries: ${activeInds}`);
+  if(isPet){
+    logPush(`Initializing HSW Partners Deal Scout — Pet Boarding Mandate`);
+    logPush(`Strategy: ${activeStrats}`);
+    logPush(`Services: ${activePetServices}`);
+  } else {
+    logPush(`Initializing HSW Partners Deal Scout — Sarah Wexler buy box`);
+    logPush(`Strategy: ${activeStrats}`);
+    logPush(`Industries: ${activeInds}`);
+  }
   logPush(`Geography: ${[...(ctx.geoStates||[])].join(', ') || 'unrestricted'}`);
   logPush(`Floors: ${ctx.ageFloor}+ yrs · ${ctx.hcFloor}+ employees`);
   logPush(`Distribution gate: ${ctx.distFilter==='any'?'any':ctx.distFilter==='standalone'?'$400K+ (Stand-Alone)':'$100K+ (Add-On)'}`);
@@ -948,10 +1326,81 @@ async function runScout(){
   if(customCtx) logPush(`Custom sourcing notes applied`, 'log-warn');
 
   // === LIVE CLAUDE API VIA CLOUDFLARE WORKER PROXY ===
-  // Worker holds the ANTHROPIC_API_KEY as a secret; never exposed to browser.
   const WORKER_ENDPOINT = 'https://hsw-scout.wyssbk.workers.dev';
 
-  const systemPrompt = `You are the HSW Partners Deal Scout — an institutional-grade AI deal-sourcing agent operated by Brian Wyss through Avila Phoenix Ventures, LLC for Sarah Wexler / HSW Partners, LLC.
+  const systemPrompt = isPet ? `You are the HSW Partners Deal Scout (Pet Boarding Mandate) — an institutional-grade AI deal-sourcing agent operated by Brian Wyss through Avila Phoenix Ventures, LLC for Sarah Wexler / HSW Partners, LLC.
+
+BUYER PROFILE:
+- HSW Partners, LLC, with Sarah Wexler as authorized representative
+- Brian Wyss / Avila Phoenix Ventures, LLC serves as institutional operating partner
+- Target: Absentee or semi-absentee operating model with key management in place
+
+PET BOARDING MANDATE — BUY BOX:
+Scope: Non-medical pet services only
+- Boarding (kennels, pet hotels, pet resorts)
+- Daycare (dog daycare, doggy day camps)
+- Grooming (full-service grooming, mobile grooming chains)
+- Training (obedience, board-and-train, behavioral training)
+- NO veterinary medicine (excluded entirely from this mandate)
+
+Strategy: Stand-alone OR Add-on/Stacking both eligible.
+
+Core Investment Criteria:
+- Business Age: 15–20+ years established
+- 10+ employees with key management not owner-dependent
+- Absentee or semi-absentee capable
+
+Cash Flow / Distribution Requirements:
+- Add-On / Stacking: $100,000+ annual partner distribution after debt service, opex, and reinvestment reserve
+- Stand-Alone: $400,000+ annual partner distribution after debt service, opex, and reinvestment reserve
+
+Geographic Focus (9 states):
+FL, GA, SC, NC, TX, NM, AZ, CA, NV
+
+Sub-regions:
+- Southeast: FL, GA, SC, NC
+- Southwest: TX, NM, AZ
+- West Coast: CA, NV
+
+CURRENT FILTERS APPLIED:
+- Strategies: ${activeStrats}
+- Service categories: ${activePetServices}
+- Geography: ${[...(ctx.geoStates||[])].join(', ')}
+- Age floor: ${ctx.ageFloor}+ years
+- Headcount floor: ${ctx.hcFloor}+ employees
+- Distribution gate: ${ctx.distFilter}
+- Custom notes: ${customCtx || 'none'}
+- Platforms: ${activePlats.join(', ')}
+
+OUTPUT REQUIREMENT:
+Return a JSON array (raw — no markdown, no preamble) of 8–14 plausible pet boarding business listings matching the mandate. Each object must have:
+{
+  "name": string,
+  "subindustry": string (e.g. "Full-Service Pet Resort", "Boarding + Daycare", "Daycare + Training"),
+  "services": array of strings (subset of: "boarding", "daycare", "grooming", "training"),
+  "state": string (2-letter, must be in target 9),
+  "city": string,
+  "age": number,
+  "employees": number,
+  "asking": number,
+  "sde": number,
+  "revenue": number,
+  "strategy": "standalone" | "addon",
+  "summary": string (2–4 sentences),
+  "fitNotes": string (1–2 sentences on HSW fit),
+  "risk": string (1–2 sentences on diligence concern),
+  "source": string (platform name),
+  "verdict": "advance" | "review" | "pass"
+}
+
+Constraints:
+- All deals must be in FL, GA, SC, NC, TX, NM, AZ, CA, or NV
+- NO veterinary medicine — pure pet services only
+- "services" array must contain only: boarding, daycare, grooming, training
+- Never reference "Acquisition Network Investors"
+- Never use the word "retrade"
+- Asking multiple typically 3.0x–4.5x SDE
+- Only include deals that plausibly clear the distribution floor for their strategy` : `You are the HSW Partners Deal Scout — an institutional-grade AI deal-sourcing agent operated by Brian Wyss through Avila Phoenix Ventures, LLC for Sarah Wexler / HSW Partners, LLC.
 
 BUYER PROFILE:
 - HSW Partners, LLC, with Sarah Wexler as authorized representative
@@ -1018,6 +1467,10 @@ Constraints:
 - Asking price multiple of SDE typically 3.0x–4.5x
 - Only include deals that plausibly clear the distribution threshold for their strategy`;
 
+  const userMsg = isPet
+    ? `Run the sweep and return the JSON array of qualifying pet boarding deals. Custom sourcing notes: ${customCtx || 'apply standard mandate.'}`
+    : `Run the sweep and return the JSON array of qualifying HSW deals. Custom sourcing notes: ${customCtx || 'apply standard buy box.'}`;
+
   try{
     logPush('Querying Claude via Cloudflare Worker proxy…');
     const resp = await fetch(WORKER_ENDPOINT, {
@@ -1028,7 +1481,7 @@ Constraints:
         max_tokens: 4500,
         system: systemPrompt,
         messages: [
-          { role: 'user', content: `Run the sweep and return the JSON array of qualifying HSW deals. Custom sourcing notes: ${customCtx || 'apply standard buy box.'}` }
+          { role: 'user', content: userMsg }
         ]
       })
     });
@@ -1045,7 +1498,7 @@ Constraints:
       runFromLibrary(ctx); btn.disabled=false; btn.textContent='Scout Listings'; return;
     }
     logPush(`Received ${deals.length} candidate listings from live agent`, 'log-ok');
-    logPush('Applying HSW scoring matrix…');
+    logPush(`Applying ${isPet?'Pet Boarding mandate':'HSW'} scoring matrix…`);
     deals.forEach(d=>d.score = scoreDeal(d, ctx));
     deals = deals.filter(d=>d.score>0).sort((a,b)=>b.score-a.score);
     logPush(`${deals.length} deals cleared the buy box gate`, 'log-ok');
@@ -1058,7 +1511,8 @@ Constraints:
 }
 
 function runFromLibrary(ctx){
-  let deals = HSW_LIBRARY.map(d=>({...d, score: scoreDeal(d, ctx)}))
+  const library = ctx.mandate === 'petboard' ? PET_BOARDING_LIBRARY : HSW_LIBRARY;
+  let deals = library.map(d=>({...d, score: scoreDeal(d, ctx)}))
     .filter(d=>d.score>0)
     .sort((a,b)=>b.score-a.score);
   logPush(`Library sweep complete — ${deals.length} listings scored`, 'log-ok');
@@ -1103,14 +1557,21 @@ function dealsToCSV(deals){
   ];
   const currentYear = new Date().getFullYear();
   const verdictLabel = v => v==='advance'?'ADVANCE TO LOI DRAFTING':v==='review'?'FURTHER DILIGENCE REQUIRED':'PASS';
-  const indLabel = i => ({home:'Home Services',pet:'Pet Care / Veterinary',mfg:'Manufacturing'})[i] || i;
+  const indLabel = (d) => {
+    if(d.industry) return ({home:'Home Services',pet:'Pet Care / Veterinary',mfg:'Manufacturing'})[d.industry] || d.industry;
+    if(d.services && d.services.length){
+      const cat = d.services.map(s=>s.charAt(0).toUpperCase()+s.slice(1)).join(' + ');
+      return `Pet Services (${cat})`;
+    }
+    return '—';
+  };
   const stratLabel = s => s==='standalone'?'Stand-Alone':'Add-On / Stacking';
 
   const rows = deals.map(d => [
     d.score,
     verdictLabel(d.verdict),
     d.name,
-    indLabel(d.industry),
+    indLabel(d),
     d.subindustry,
     stratLabel(d.strategy),
     d.city.replace(/,\s*[A-Z]{2}.*$/, ''), // strip trailing state if present
@@ -1131,8 +1592,10 @@ function dealsToCSV(deals){
   // Header banner rows (commented-style metadata at top of CSV)
   const ts = new Date();
   const dateStr = ts.toISOString().split('T')[0];
+  const mandateLabel = STATE.mandate === 'petboard' ? 'Pet Boarding Mandate' : 'Sarah Wexler Buy Box';
   const banner = [
     `"HSW Partners Deal Scout — Sourced Opportunities"`,
+    `"Mandate: ${mandateLabel}"`,
     `"Buyer: Sarah Wexler / HSW Partners, LLC"`,
     `"Operating Partner: Brian Wyss · Avila Phoenix Ventures, LLC"`,
     `"Generated: ${ts.toISOString()}"`,
@@ -1155,7 +1618,8 @@ function downloadCSV(){
   const url = URL.createObjectURL(blob);
   const ts = new Date();
   const stamp = ts.toISOString().slice(0,10) + '_' + ts.toTimeString().slice(0,5).replace(':','');
-  const filename = `HSW_Deal_Scout_${stamp}.csv`;
+  const mandateTag = STATE.mandate === 'petboard' ? 'PetBoarding' : 'HSW';
+  const filename = `HSW_Deal_Scout_${mandateTag}_${stamp}.csv`;
   const a = document.createElement('a');
   a.href = url; a.download = filename;
   document.body.appendChild(a); a.click();
