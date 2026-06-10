@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
-<meta name="hsw-scout-version" content="v3.1-live-sourcing-parser-fix-2026-05-14" />
+<meta name="hsw-scout-version" content="v3.2-widen-sweep-floors-2026-05-14" />
 <title>HSW Partners Deal Scout · Sarah Wexler</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -368,7 +368,7 @@
       <span>Operating Partner: <b>Brian Wyss · Avila Phoenix Ventures, LLC</b></span>
       <span>Strategy: <b>Stand-Alone + Add-On / Stacking</b></span>
     </div>
-    <div class="right">v3.1 · Live Sourcing Only</div>
+    <div class="right">v3.2 · Live Sourcing Only</div>
   </div>
 </header>
 
@@ -458,6 +458,9 @@
     <div class="field">
       <label>Business Age Floor</label>
       <select id="ageSel">
+        <option value="3">3+ years (widen sweep)</option>
+        <option value="5">5+ years (widen sweep)</option>
+        <option value="10">10+ years</option>
         <option value="15" selected>15+ years (HSW minimum)</option>
         <option value="20">20+ years (preferred)</option>
         <option value="25">25+ years (legacy)</option>
@@ -468,6 +471,7 @@
     <div class="field">
       <label>Headcount Floor</label>
       <select id="hcSel">
+        <option value="5">5+ employees (widen sweep)</option>
         <option value="10" selected>10+ employees (HSW min)</option>
         <option value="15">15+ employees</option>
         <option value="25">25+ employees</option>
