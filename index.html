@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
-<meta name="hsw-scout-version" content="v3.0-live-sourcing-2026-05-13" />
+<meta name="hsw-scout-version" content="v3.1-live-sourcing-parser-fix-2026-05-14" />
 <title>HSW Partners Deal Scout · Sarah Wexler</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -368,7 +368,7 @@
       <span>Operating Partner: <b>Brian Wyss · Avila Phoenix Ventures, LLC</b></span>
       <span>Strategy: <b>Stand-Alone + Add-On / Stacking</b></span>
     </div>
-    <div class="right">v3.0 · Live Sourcing Only</div>
+    <div class="right">v3.1 · Live Sourcing Only</div>
   </div>
 </header>
 
@@ -1395,7 +1395,8 @@ CURRENT FILTERS APPLIED:
 - Platforms: ${activePlats.join(', ')}
 
 OUTPUT REQUIREMENT:
-After completing your searches, return a JSON array (raw — no markdown, no preamble, no explanatory text before or after) of the qualifying LIVE listings you found. If zero qualify, return [].
+CRITICAL OUTPUT FORMAT (read carefully):
+Your final assistant message after using web_search tools must contain NOTHING except a raw JSON array. Do NOT include any of the following: "I'll conduct", "I've found", "Let me", "Here are", "Based on my searches", any narration, any introduction, any conclusion, any markdown code fences, any prose whatsoever. The FIRST character of your final message MUST be the opening bracket [ and the LAST character must be the closing bracket ]. If you have nothing to report, return exactly: []
 
 Each object must have:
 {
@@ -1487,7 +1488,8 @@ CURRENT FILTERS APPLIED:
 - Platforms: ${activePlats.join(', ')}
 
 OUTPUT REQUIREMENT:
-After completing your searches, return a JSON array (raw — no markdown, no preamble, no explanatory text before or after) of the qualifying LIVE listings you found. If zero qualify, return [].
+CRITICAL OUTPUT FORMAT (read carefully):
+Your final assistant message after using web_search tools must contain NOTHING except a raw JSON array. Do NOT include any of the following: "I'll conduct", "I've found", "Let me", "Here are", "Based on my searches", any narration, any introduction, any conclusion, any markdown code fences, any prose whatsoever. The FIRST character of your final message MUST be the opening bracket [ and the LAST character must be the closing bracket ]. If you have nothing to report, return exactly: []
 
 Each object must have:
 {
@@ -1554,21 +1556,58 @@ Constraints:
     const searchCalls = (data.content||[]).filter(b=>b.type==='server_tool_use' || b.type==='tool_use').length;
     if(searchCalls > 0) logPush(`Claude performed ${searchCalls} web search(es)`, 'log-ok');
 
-    // Extract final text block (the JSON array) — find the last text block
+    // Extract final text block (the JSON array) — find ALL text blocks
     const textBlocks = (data.content||[]).filter(b=>b.type==='text').map(b=>b.text);
-    const text = textBlocks.join('\n').replace(/```json|```/g,'').trim();
+    // Prefer the LAST text block — when Claude uses tools, it often emits the
+    // final JSON in the final text block after all tool_use/tool_result rounds.
+    const lastText = textBlocks.length ? textBlocks[textBlocks.length-1] : '';
+    const combinedText = textBlocks.join('\n');
 
-    // Try to find the JSON array in the response — Claude may include reasoning before/after
-    let deals = [];
-    try{
-      // Look for the first [ ... ] block in the text
-      const arrayMatch = text.match(/\[[\s\S]*\]/);
-      const jsonText = arrayMatch ? arrayMatch[0] : text;
-      deals = JSON.parse(jsonText);
-      if(!Array.isArray(deals)) throw new Error('not an array');
-    }catch(e){
+    // Helper: extract a valid JSON array from a string using bracket-counting,
+    // tolerating preamble/postamble narration around the array.
+    function extractJsonArray(str){
+      const cleaned = str.replace(/```json|```/g,'');
+      // Try strategy 1: direct parse if the string starts with [
+      const trimmed = cleaned.trim();
+      if(trimmed.startsWith('[')){
+        try{ const r = JSON.parse(trimmed); if(Array.isArray(r)) return r; }catch(e){}
+      }
+      // Strategy 2: find the first '[' and bracket-count forward to find the
+      // matching ']' (respecting strings to avoid false closes inside text).
+      for(let i=0;i<cleaned.length;i++){
+        if(cleaned[i] !== '[') continue;
+        let depth = 0, inStr = false, esc = false;
+        for(let j=i;j<cleaned.length;j++){
+          const ch = cleaned[j];
+          if(esc){ esc = false; continue; }
+          if(ch === '\\'){ esc = true; continue; }
+          if(ch === '"'){ inStr = !inStr; continue; }
+          if(inStr) continue;
+          if(ch === '[') depth++;
+          else if(ch === ']'){
+            depth--;
+            if(depth === 0){
+              const candidate = cleaned.slice(i, j+1);
+              try{
+                const r = JSON.parse(candidate);
+                if(Array.isArray(r)) return r;
+              }catch(e){
+                // not valid; continue scanning for next [
+                break;
+              }
+            }
+          }
+        }
+      }
+      return null;
+    }
+
+    let deals = extractJsonArray(lastText);
+    if(deals === null) deals = extractJsonArray(combinedText);
+
+    if(deals === null){
       logPush('Could not parse JSON array from live response', 'log-err');
-      logPush('Raw response preview: ' + text.slice(0,200), 'log-err');
+      logPush('Raw response preview: ' + combinedText.slice(0,300), 'log-err');
       renderEmpty('Live sourcing completed but the response could not be parsed. Try again.');
       btn.disabled=false; btn.textContent='Scout Listings'; return;
     }
