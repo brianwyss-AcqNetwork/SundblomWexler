@@ -6,8 +6,8 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
-<meta name="hsw-scout-version" content="v3.2-widen-sweep-floors-2026-05-14" />
-<title>HSW Partners Deal Scout · Sarah Wexler</title>
+<meta name="hsw-scout-version" content="v3.3-sw-partners-rebrand-2026-05-14" />
+<title>SW Partners Deal Scout · Sarah Wexler &amp; David Sundblom</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -356,10 +356,10 @@
 
 <header class="brand">
   <div class="crest">
-    <div class="monogram">HSW</div>
+    <div class="monogram">S+W</div>
     <div class="titles">
-      <h1>HSW Partners <span class="accent">Deal Scout</span></h1>
-      <div class="subtitle">Sarah Wexler · Institutional Acquisition Sourcing</div>
+      <h1>SW Partners <span class="accent">Deal Scout</span></h1>
+      <div class="subtitle">Sarah Wexler &amp; David Sundblom · Institutional Acquisition Sourcing</div>
     </div>
   </div>
   <div class="meta-row">
@@ -368,7 +368,7 @@
       <span>Operating Partner: <b>Brian Wyss · Avila Phoenix Ventures, LLC</b></span>
       <span>Strategy: <b>Stand-Alone + Add-On / Stacking</b></span>
     </div>
-    <div class="right">v3.2 · Live Sourcing Only</div>
+    <div class="right">v3.3 · SW Partners</div>
   </div>
 </header>
 
@@ -382,7 +382,7 @@
     <div class="field">
       <label>Mandate</label>
       <select id="mandateSel">
-        <option value="hsw" selected>HSW Standard Buy Box (3 industries)</option>
+        <option value="hsw" selected>SW Standard Buy Box (3 industries)</option>
         <option value="petboard">Pet Boarding Mandate (FL/GA/SC/NC/TX/NM/AZ/CA/NV)</option>
       </select>
     </div>
@@ -417,7 +417,7 @@
     <div class="field" id="geoFieldHSW">
       <label>Geographic Scope</label>
       <select id="geoSel">
-        <option value="all" selected>All HSW States (industry-aware)</option>
+        <option value="all" selected>All SW States (industry-aware)</option>
         <option value="home_full">Home Svc / Mfg — All 7 states</option>
         <option value="pet_full">Pet Care — All 7 states</option>
         <option value="se">Southeast — NC, SC, GA, FL</option>
@@ -461,7 +461,7 @@
         <option value="3">3+ years (widen sweep)</option>
         <option value="5">5+ years (widen sweep)</option>
         <option value="10">10+ years</option>
-        <option value="15" selected>15+ years (HSW minimum)</option>
+        <option value="15" selected>15+ years (SW minimum)</option>
         <option value="20">20+ years (preferred)</option>
         <option value="25">25+ years (legacy)</option>
         <option value="30">30+ years (heritage)</option>
@@ -472,7 +472,7 @@
       <label>Headcount Floor</label>
       <select id="hcSel">
         <option value="5">5+ employees (widen sweep)</option>
-        <option value="10" selected>10+ employees (HSW min)</option>
+        <option value="10" selected>10+ employees (SW min)</option>
         <option value="15">15+ employees</option>
         <option value="25">25+ employees</option>
         <option value="50">50+ employees</option>
@@ -507,7 +507,7 @@
 
     <!-- BUY BOX BANNER -->
     <div class="buybox" id="buyboxHSW">
-      <h4>HSW Partners <em>— Sarah Wexler Buy Box</em></h4>
+      <h4>SW Partners <em>— Sarah Wexler &amp; David Sundblom Buy Box</em></h4>
       <div class="grid">
         <div>
           <b>Industries</b>
@@ -537,7 +537,7 @@
     </div>
 
     <div class="buybox" id="buyboxPet" style="display:none">
-      <h4>HSW Partners <em>— Pet Boarding Mandate</em></h4>
+      <h4>SW Partners <em>— Pet Boarding Mandate</em></h4>
       <div class="grid">
         <div>
           <b>Scope</b>
@@ -571,7 +571,7 @@
     <div class="empty" id="emptyPanel">
       <div class="ornament">❦</div>
       <h2>Awaiting Sourcing Sweep</h2>
-      <p>Configure the buy box filters at left and launch the agent. The HSW Deal Scout will sweep listing platforms, score each deal against Sarah Wexler's criteria, and surface the highest-fit opportunities first — sorted by HSW Fit Score and capped at distribution-threshold qualification.</p>
+      <p>Configure the buy box filters at left and launch the agent. The SW Deal Scout will sweep listing platforms, score each deal against the SW Partners buy box, and surface the highest-fit opportunities first — sorted by SW Fit Score and capped at distribution-threshold qualification.</p>
     </div>
 
     <div id="resultsPanel" style="display:none">
@@ -592,12 +592,12 @@
 </main>
 
 <footer>
-  HSW Partners Deal Scout · Operated by <b>Brian Wyss · Avila Phoenix Ventures, LLC</b> · Confidential — for internal HSW use only
+  SW Partners Deal Scout · Operated by <b>Brian Wyss · Avila Phoenix Ventures, LLC</b> · Confidential — for internal SW Partners use only
 </footer>
 
 <script>
 //================================================================
-// HSW PARTNERS DEAL SCOUT — Sarah Wexler
+// SW PARTNERS DEAL SCOUT — Sarah Wexler & David Sundblom
 // Operated by Brian Wyss / Avila Phoenix Ventures, LLC
 //================================================================
 
@@ -683,7 +683,7 @@ function logPush(msg, cls){
 const sleep = ms => new Promise(r=>setTimeout(r,ms));
 
 //----------------------------------------------------------------
-// CURATED HSW FALLBACK DEAL LIBRARY
+// CURATED SW FALLBACK DEAL LIBRARY
 // Used when running outside the Claude artifact runtime (e.g. GitHub Pages)
 //----------------------------------------------------------------
 const HSW_LIBRARY = [
@@ -694,8 +694,8 @@ const HSW_LIBRARY = [
     age:31, employees:18, asking:2950000, sde:780000, revenue:5400000,
     strategy:"standalone",
     summary:"Three-decade residential + light commercial plumbing operation. Service-call recurring base of ~3,400 households across New Hanover and Brunswick counties. Owner stepped back to 10 hrs/week 18 months ago — full GM in place running dispatch, foreman handles techs.",
-    fitNotes:"Hits stand-alone $400K distribution after debt with margin. NC is HSW core state. 31 yrs > 20-yr preferred floor. 18 employees > 10 min.",
-    risk:"Asking is 3.8x SDE — slightly above HSW median. Verify recurring service-agreement attach rate and parts-margin assumption.",
+    fitNotes:"Hits stand-alone $400K distribution after debt with margin. NC is SW core state. 31 yrs > 20-yr preferred floor. 18 employees > 10 min.",
+    risk:"Asking is 3.8x SDE — slightly above SW median. Verify recurring service-agreement attach rate and parts-margin assumption.",
     source:"BizBuySell", verdict:"advance"
   },
   {
@@ -714,7 +714,7 @@ const HSW_LIBRARY = [
     age:27, employees:14, asking:1850000, sde:485000, revenue:3100000,
     strategy:"addon",
     summary:"Residential pool maintenance route — 870 weekly accounts. Owner runs 3 days/wk, two route managers run day-to-day. Average customer tenure 6.4 years.",
-    fitNotes:"Excellent add-on / stacking candidate. Recurring route revenue, low working capital. Florida is core HSW state.",
+    fitNotes:"Excellent add-on / stacking candidate. Recurring route revenue, low working capital. Florida is core SW state.",
     risk:"FL pool services — heavy PE consolidation (Pool Corp adjacencies). Verify route density vs. competing buyers' synergy bids.",
     source:"DealStream", verdict:"advance"
   },
@@ -878,7 +878,7 @@ const HSW_LIBRARY = [
     age:31, employees:22, asking:3450000, sde:875000, revenue:6100000,
     strategy:"standalone",
     summary:"Custom wire forming + spring manufacturing for OEM customers in industrial, agricultural, and material-handling sectors. Plant manager 16-yr tenure. Owner does sales only.",
-    fitNotes:"Stand-alone. NV core HSW state. 31 yrs operating history.",
+    fitNotes:"Stand-alone. NV core SW state. 31 yrs operating history.",
     risk:"OEM customer concentration; commodity input exposure (steel wire). Test repricing mechanisms in supply agreements.",
     source:"BizBuySell", verdict:"advance"
   },
@@ -1026,7 +1026,7 @@ const PET_BOARDING_LIBRARY = [
     age:19, employees:22, asking:2850000, sde:710000, revenue:3700000,
     strategy:"addon",
     summary:"Inner-loop Houston facility, 72 boarding suites, 55-dog daycare, four grooming stations. Two location managers in place; owner travels frequently and oversees remotely.",
-    fitNotes:"Add-on qualifier. TX target state. Already semi-absentee operating model — ideal HSW profile.",
+    fitNotes:"Add-on qualifier. TX target state. Already semi-absentee operating model — ideal SW profile.",
     risk:"Hurricane exposure / facility damage history — verify insurance and recent claims. Flood zone status.",
     source:"BizQuest", verdict:"advance"
   },
@@ -1161,7 +1161,7 @@ function scoreDeal(deal, ctx){
     if(!deal.services || !deal.services.some(s => ctx.petServices.has(s))) return 0;
     score += 8;
   } else {
-    // HSW standard scoring
+    // SW standard scoring
     if(ctx.industries.has(deal.industry)) score += 8; else return 0;
   }
   // Strategy match
@@ -1245,7 +1245,7 @@ function renderResults(deals){
   const count = document.getElementById('resultsCount');
   grid.innerHTML='';
   if(deals.length===0){
-    grid.innerHTML = `<div class="empty"><div class="ornament">∅</div><h2>No qualifying deals surfaced</h2><p>The current filter combination returned no deals meeting HSW Partners' buy box. Loosen geography, distribution threshold, or business age to widen the funnel.</p></div>`;
+    grid.innerHTML = `<div class="empty"><div class="ornament">∅</div><h2>No qualifying deals surfaced</h2><p>The current filter combination returned no deals meeting SW Partners' buy box. Loosen geography, distribution threshold, or business age to widen the funnel.</p></div>`;
     count.textContent = '0 sourced';
   } else {
     count.textContent = `${deals.length} sourced · sorted by Fit Score`;
@@ -1260,7 +1260,7 @@ function renderResults(deals){
           </div>
           <div class="score-badge">
             <div class="score">${d.score}</div>
-            <div class="label">HSW Fit</div>
+            <div class="label">SW Fit</div>
           </div>
         </div>
         <div class="stats">
@@ -1318,11 +1318,11 @@ async function runScout(){
   const activePlats = Object.entries(STATE.platforms).filter(([k,v])=>v).map(([k])=>k);
 
   if(isPet){
-    logPush(`Initializing HSW Partners Deal Scout — Pet Boarding Mandate`);
+    logPush(`Initializing SW Partners Deal Scout — Pet Boarding Mandate`);
     logPush(`Strategy: ${activeStrats}`);
     logPush(`Services: ${activePetServices}`);
   } else {
-    logPush(`Initializing HSW Partners Deal Scout — Sarah Wexler buy box`);
+    logPush(`Initializing SW Partners Deal Scout — Sarah Wexler & David Sundblom buy box`);
     logPush(`Strategy: ${activeStrats}`);
     logPush(`Industries: ${activeInds}`);
   }
@@ -1337,7 +1337,7 @@ async function runScout(){
   // === LIVE CLAUDE API VIA CLOUDFLARE WORKER PROXY ===
   const WORKER_ENDPOINT = 'https://hsw-scout.wyssbk.workers.dev';
 
-  const systemPrompt = isPet ? `You are the HSW Partners Deal Scout (Pet Boarding Mandate) — an institutional-grade AI deal-sourcing agent operated by Brian Wyss through Avila Phoenix Ventures, LLC for Sarah Wexler / HSW Partners, LLC.
+  const systemPrompt = isPet ? `You are the SW Partners Deal Scout (Pet Boarding Mandate) — an institutional-grade AI deal-sourcing agent operated by Brian Wyss through Avila Phoenix Ventures, LLC for SW Partners, LLC (principals: Sarah Wexler and David Sundblom).
 
 CRITICAL OPERATING MODE: LIVE SOURCING ONLY
 - You MUST use the web_search tool to find REAL, CURRENT business-for-sale listings
@@ -1347,7 +1347,7 @@ CRITICAL OPERATING MODE: LIVE SOURCING ONLY
 - It is far better to return 2 verified live deals than 10 fabricated ones
 
 BUYER PROFILE:
-- HSW Partners, LLC, with Sarah Wexler as authorized representative
+- SW Partners, LLC, with Sarah Wexler and David Sundblom as authorized representatives
 - Brian Wyss / Avila Phoenix Ventures, LLC serves as institutional operating partner
 - Target: Absentee or semi-absentee operating model with key management in place
 
@@ -1416,7 +1416,7 @@ Each object must have:
   "revenue": number (USD; if not stated, omit the deal),
   "strategy": "standalone" | "addon",
   "summary": string (2–4 sentences pulled from listing description, paraphrased not quoted),
-  "fitNotes": string (1–2 sentences on HSW fit — your analysis),
+  "fitNotes": string (1–2 sentences on SW fit — your analysis),
   "risk": string (1–2 sentences on diligence concern — your analysis),
   "source": string (platform name: "BizBuySell" / "BizQuest" / "DealStream" / "LoopNet"),
   "listingUrl": string (the FULL https:// URL to the listing detail page where an NDA can be requested),
@@ -1431,7 +1431,7 @@ Constraints:
 - Omit any deal where age, employees, asking, SDE, or revenue are not disclosed
 - Never reference "Acquisition Network Investors"
 - Never use the word "retrade"
-- Only include deals that plausibly clear the distribution floor for their strategy` : `You are the HSW Partners Deal Scout — an institutional-grade AI deal-sourcing agent operated by Brian Wyss through Avila Phoenix Ventures, LLC for Sarah Wexler / HSW Partners, LLC.
+- Only include deals that plausibly clear the distribution floor for their strategy` : `You are the SW Partners Deal Scout — an institutional-grade AI deal-sourcing agent operated by Brian Wyss through Avila Phoenix Ventures, LLC for SW Partners, LLC (principals: Sarah Wexler and David Sundblom).
 
 CRITICAL OPERATING MODE: LIVE SOURCING ONLY
 - You MUST use the web_search tool to find REAL, CURRENT business-for-sale listings
@@ -1441,11 +1441,11 @@ CRITICAL OPERATING MODE: LIVE SOURCING ONLY
 - It is far better to return 2 verified live deals than 10 fabricated ones
 
 BUYER PROFILE:
-- HSW Partners, LLC, with Sarah Wexler as authorized representative
+- SW Partners, LLC, with Sarah Wexler and David Sundblom as authorized representatives
 - Brian Wyss / Avila Phoenix Ventures, LLC serves as institutional operating partner — leading diligence, structuring, and post-close integration
 - Target: Absentee or semi-absentee operating model with key management already in place
 
-HSW BUY BOX:
+SW BUY BOX:
 Industries:
 - Home Services (stand-alone OR add-on/stacking)
 - Pet Services — boarding, daycare, grooming, training; NO veterinary medicine (stand-alone OR add-on/stacking)
@@ -1484,7 +1484,7 @@ For each listing you find, verify it is currently active (not "sold" or archived
 CURRENT FILTERS APPLIED:
 - Strategies: ${activeStrats}
 - Industries: ${activeInds}
-- Geography: ${[...(ctx.geoStates||[])].join(', ') || 'all HSW states'}
+- Geography: ${[...(ctx.geoStates||[])].join(', ') || 'all SW states'}
 - Age floor: ${ctx.ageFloor}+ years
 - Headcount floor: ${ctx.hcFloor}+ employees
 - Distribution gate: ${ctx.distFilter}
@@ -1509,7 +1509,7 @@ Each object must have:
   "revenue": number (USD; if not stated, omit the deal),
   "strategy": "standalone" | "addon",
   "summary": string (2–4 sentences pulled from listing description, paraphrased not quoted),
-  "fitNotes": string (1–2 sentences on why this fits HSW),
+  "fitNotes": string (1–2 sentences on why this fits SW),
   "risk": string (1–2 sentences on top diligence concern),
   "source": string (platform name: "BizBuySell" / "BizQuest" / "DealStream" / "LoopNet"),
   "listingUrl": string (the FULL https:// URL to the listing detail page where an NDA can be requested),
@@ -1522,13 +1522,13 @@ Constraints:
 - Pet services deals must be in: CO, FL, UT, AZ, GA, NV, WI
 - Manufacturing must be stand-alone only
 - Omit any deal where age, employees, asking, SDE, or revenue are not disclosed
-- Never reference "Acquisition Network Investors" — this is HSW Partners only
+- Never reference "Acquisition Network Investors" — this is SW Partners only
 - Never use the word "retrade"
 - Only include deals that plausibly clear the distribution threshold for their strategy`;
 
   const userMsg = isPet
     ? `Run a thorough sweep of business-for-sale listing platforms for currently active pet boarding mandate deals in FL, GA, SC, NC, TX, NM, AZ, CA, NV. Use web_search aggressively. Return the JSON array of qualifying LIVE listings with verified listingUrls. If zero qualify, return []. Custom sourcing notes: ${customCtx || 'apply standard mandate.'}`
-    : `Run a thorough sweep of business-for-sale listing platforms for currently active HSW buy box deals. Use web_search aggressively across the target industries and states. Return the JSON array of qualifying LIVE listings with verified listingUrls. If zero qualify, return []. Custom sourcing notes: ${customCtx || 'apply standard buy box.'}`;
+    : `Run a thorough sweep of business-for-sale listing platforms for currently active SW buy box deals. Use web_search aggressively across the target industries and states. Return the JSON array of qualifying LIVE listings with verified listingUrls. If zero qualify, return []. Custom sourcing notes: ${customCtx || 'apply standard buy box.'}`;
 
   try{
     logPush('Querying Claude via Cloudflare Worker proxy (live web search)…');
@@ -1629,7 +1629,7 @@ Constraints:
       btn.disabled=false; btn.textContent='Scout Listings'; return;
     }
 
-    logPush(`Applying ${isPet?'Pet Boarding mandate':'HSW'} scoring matrix…`);
+    logPush(`Applying ${isPet?'Pet Boarding mandate':'SW'} scoring matrix…`);
     deals.forEach(d=>d.score = scoreDeal(d, ctx));
     deals = deals.filter(d=>d.score>0).sort((a,b)=>b.score-a.score);
     logPush(`${deals.length} live deal(s) cleared the buy box gate`, 'log-ok');
@@ -1672,7 +1672,7 @@ function csvEscape(val){
 
 function dealsToCSV(deals){
   const headers = [
-    'HSW Fit Score',
+    'SW Fit Score',
     'Verdict',
     'Business Name',
     'Industry',
@@ -1688,7 +1688,7 @@ function dealsToCSV(deals){
     'Revenue (USD)',
     'Asking / SDE Multiple',
     'Operating Summary',
-    'HSW Fit Notes',
+    'SW Fit Notes',
     'Top Risk / Diligence Concern',
     'Listing Source',
     'Listing URL (NDA Request)'
@@ -1731,11 +1731,11 @@ function dealsToCSV(deals){
   // Header banner rows (commented-style metadata at top of CSV)
   const ts = new Date();
   const dateStr = ts.toISOString().split('T')[0];
-  const mandateLabel = STATE.mandate === 'petboard' ? 'Pet Boarding Mandate' : 'Sarah Wexler Buy Box';
+  const mandateLabel = STATE.mandate === 'petboard' ? 'Pet Boarding Mandate' : 'Sarah Wexler & David Sundblom Buy Box';
   const banner = [
-    `"HSW Partners Deal Scout — Sourced Opportunities"`,
+    `"SW Partners Deal Scout — Sourced Opportunities"`,
     `"Mandate: ${mandateLabel}"`,
-    `"Buyer: Sarah Wexler / HSW Partners, LLC"`,
+    `"Buyer: SW Partners, LLC (Sarah Wexler & David Sundblom)"`,
     `"Operating Partner: Brian Wyss · Avila Phoenix Ventures, LLC"`,
     `"Generated: ${ts.toISOString()}"`,
     `"Total deals: ${deals.length}"`,
@@ -1757,8 +1757,8 @@ function downloadCSV(){
   const url = URL.createObjectURL(blob);
   const ts = new Date();
   const stamp = ts.toISOString().slice(0,10) + '_' + ts.toTimeString().slice(0,5).replace(':','');
-  const mandateTag = STATE.mandate === 'petboard' ? 'PetBoarding' : 'HSW';
-  const filename = `HSW_Deal_Scout_${mandateTag}_${stamp}.csv`;
+  const mandateTag = STATE.mandate === 'petboard' ? '_PetBoarding' : '';
+  const filename = `SW_Deal_Scout${mandateTag}_${stamp}.csv`;
   const a = document.createElement('a');
   a.href = url; a.download = filename;
   document.body.appendChild(a); a.click();
