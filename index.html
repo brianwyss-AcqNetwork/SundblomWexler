@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
-<meta name="hsw-scout-version" content="v3.4-sde-floor-toggles-2026-05-14" />
+<meta name="hsw-scout-version" content="v3.5-bizscout-nullable-2026-05-14" />
 <title>SW Partners Deal Scout · Sarah Wexler &amp; David Sundblom</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -368,7 +368,7 @@
       <span>Operating Partner: <b>Brian Wyss · Avila Phoenix Ventures, LLC</b></span>
       <span>Strategy: <b>Stand-Alone + Add-On / Stacking</b></span>
     </div>
-    <div class="right">v3.4 · SW Partners</div>
+    <div class="right">v3.5 · SW Partners</div>
   </div>
 </header>
 
@@ -486,6 +486,7 @@
       <div class="platforms" id="platforms">
         <div class="plat-row"><label><input type="checkbox" data-p="bizbuysell" checked> BizBuySell</label><span class="badge">PRIMARY</span></div>
         <div class="plat-row"><label><input type="checkbox" data-p="bizquest" checked> BizQuest</label><span class="badge">PRIMARY</span></div>
+        <div class="plat-row"><label><input type="checkbox" data-p="bizscout" checked> BizScout · DealOS</label><span class="badge">PRIMARY</span></div>
         <div class="plat-row"><label><input type="checkbox" data-p="loopnet" checked> LoopNet · Businesses</label><span class="badge">RE+OP</span></div>
         <div class="plat-row"><label><input type="checkbox" data-p="dealstream" checked> DealStream</label><span class="badge">PRIMARY</span></div>
         <div class="plat-row"><label><input type="checkbox" data-p="bbb"> Business Broker · BBB.com</label><span class="badge">SEC.</span></div>
@@ -608,7 +609,7 @@ const STATE = {
   strategies: new Set(['standalone','addon']),
   industries: new Set(['home','pet','mfg']),
   petServices: new Set(['boarding','daycare','grooming','training']),
-  platforms: { bizbuysell:true, bizquest:true, loopnet:true, dealstream:true,
+  platforms: { bizbuysell:true, bizquest:true, bizscout:true, loopnet:true, dealstream:true,
                bbb:false, acquireco:false, sunbelt:false, murphy:false, vrbb:false }
 };
 
@@ -1168,30 +1169,43 @@ function scoreDeal(deal, ctx){
   }
   // Strategy match
   if(ctx.strategies.has(deal.strategy)) score += 5; else return 0;
-  // Age
-  if(deal.age >= ctx.ageFloor) score += 6; else return 0;
-  // Headcount
-  if(deal.employees >= ctx.hcFloor) score += 6; else return 0;
+  // Age — if disclosed, gate; if null, no bonus but don't fail
+  if(deal.age != null){
+    if(deal.age >= ctx.ageFloor) score += 6; else return 0;
+  } else {
+    score -= 2; // small penalty for missing data, but don't fail
+  }
+  // Headcount — same tolerance
+  if(deal.employees != null){
+    if(deal.employees >= ctx.hcFloor) score += 6; else return 0;
+  } else {
+    score -= 2;
+  }
   // Geography
   if(ctx.geoStates && !ctx.geoStates.has(deal.state)) return 0;
-  // Distribution threshold
-  // Distribution / SDE floor gate
+  // Distribution / SDE floor gate — only enforce if SDE is disclosed
   if(ctx.distFilter === 'standalone' && deal.strategy !== 'standalone') return 0;
   if(ctx.distFilter === 'addon' && deal.strategy !== 'addon') return 0;
-  if(ctx.distFilter === 'sde250' && (!deal.sde || deal.sde < 250000)) return 0;
-  if(ctx.distFilter === 'sde150' && (!deal.sde || deal.sde < 150000)) return 0;
-  // SDE strength relative to ask
-  const multiple = deal.asking / deal.sde;
-  if(multiple < 3.2) score += 8;
-  else if(multiple < 3.7) score += 5;
-  else if(multiple < 4.2) score += 2;
-  else score -= 2;
+  if(ctx.distFilter === 'sde250' && deal.sde != null && deal.sde < 250000) return 0;
+  if(ctx.distFilter === 'sde150' && deal.sde != null && deal.sde < 150000) return 0;
+  // If user explicitly set an SDE floor and SDE is null, soft penalty
+  if((ctx.distFilter === 'sde250' || ctx.distFilter === 'sde150') && deal.sde == null) score -= 3;
+  // SDE strength relative to ask — only if both disclosed
+  if(deal.asking != null && deal.sde != null && deal.sde > 0){
+    const multiple = deal.asking / deal.sde;
+    if(multiple < 3.2) score += 8;
+    else if(multiple < 3.7) score += 5;
+    else if(multiple < 4.2) score += 2;
+    else score -= 2;
+  }
   // Verdict signal
   if(deal.verdict === 'advance') score += 6;
   else if(deal.verdict === 'review') score += 1;
-  // Tenure bonus
-  if(deal.age >= 25) score += 3;
-  if(deal.age >= 30) score += 2;
+  // Tenure bonus — only if age disclosed
+  if(deal.age != null){
+    if(deal.age >= 25) score += 3;
+    if(deal.age >= 30) score += 2;
+  }
   // Pet boarding bonus: more service categories = stronger platform
   if(ctx.mandate === 'petboard' && deal.services){
     if(deal.services.length >= 4) score += 4;
@@ -1233,8 +1247,9 @@ function geoStatesForPet(geoSel){
   if(geoSel==='nc_sc_pet') return new Set(['NC','SC']);
   return new Set(allPet);
 }
-function fmtUSD(n){ return '$' + n.toLocaleString('en-US') }
+function fmtUSD(n){ if(n==null) return '—'; return '$' + n.toLocaleString('en-US') }
 function fmtUSDk(n){
+  if(n==null) return '—';
   if(n>=1000000) return '$'+ (n/1000000).toFixed(2)+'M';
   return '$'+ Math.round(n/1000) + 'K';
 }
@@ -1257,11 +1272,13 @@ function renderResults(deals){
     deals.forEach(d=>{
       const card = document.createElement('div');
       card.className='deal-card';
+      const estLabel = d.age != null ? `Est. ${new Date().getFullYear() - d.age}` : 'Est. — (not disclosed)';
+      const hcLabel = d.employees != null ? d.employees : '—';
       card.innerHTML = `
         <div class="deal-head">
           <div class="left">
             <h3>${d.name}</h3>
-            <div class="loc">${d.subindustry} · <b>${d.city}</b> · Est. ${new Date().getFullYear() - d.age}</div>
+            <div class="loc">${d.subindustry} · <b>${d.city}</b> · ${estLabel}</div>
           </div>
           <div class="score-badge">
             <div class="score">${d.score}</div>
@@ -1272,7 +1289,7 @@ function renderResults(deals){
           <div class="stat"><div class="k">Asking</div><div class="v">${fmtUSDk(d.asking)}</div></div>
           <div class="stat"><div class="k">SDE</div><div class="v">${fmtUSDk(d.sde)}</div></div>
           <div class="stat"><div class="k">Revenue</div><div class="v">${fmtUSDk(d.revenue)}</div></div>
-          <div class="stat"><div class="k">Headcount</div><div class="v">${d.employees}</div></div>
+          <div class="stat"><div class="k">Headcount</div><div class="v">${hcLabel}</div></div>
         </div>
         <div class="deal-body">
           <p>${d.summary}</p>
@@ -1395,10 +1412,13 @@ Run multiple targeted web searches across these sources:
 - site:bizbuysell.com pet boarding [state]
 - site:bizquest.com pet daycare [state]
 - site:dealstream.com pet resort
+- site:bizscout.com pet boarding [state]
+- site:dealos.bizscout.com pet daycare [state]
+- "pet services for sale" bizscout [state]
 
-Run at least 4–8 distinct searches across the target states before assembling your output.
+Run at least 5–10 distinct searches across the target states and platforms before assembling your output. Search BizScout/DealOS specifically — it carries many listings not on BizBuySell or BizQuest.
 
-For each listing you find, verify it is currently active (not "sold" or archived) and extract real data points from the listing page.
+For each listing you find, verify it is currently active (not "sold" or archived). Some platforms (BizScout/DealOS especially) gate full listing details behind sign-in; in that case, use whatever financial data is visible in the public summary and use null for fields you cannot verify (see schema below). Do NOT invent values.
 
 CURRENT FILTERS APPLIED:
 - Strategies: ${activeStrats}
@@ -1421,11 +1441,11 @@ Each object must have:
   "services": array of strings (subset of: "boarding", "daycare", "grooming", "training"),
   "state": string (2-letter, must be in target 9),
   "city": string,
-  "age": number (years operating — if not stated, omit the deal),
-  "employees": number (if not stated, omit the deal),
-  "asking": number (USD; if "undisclosed" or not given, omit the deal),
-  "sde": number (USD; if not stated, omit the deal),
-  "revenue": number (USD; if not stated, omit the deal),
+  "age": number | null (years operating; use null if not disclosed in the listing),
+  "employees": number | null (use null if not disclosed),
+  "asking": number | null (USD; use null if undisclosed),
+  "sde": number | null (USD; use null if not disclosed),
+  "revenue": number | null (USD; use null if not disclosed),
   "strategy": "standalone" | "addon",
   "summary": string (2–4 sentences pulled from listing description, paraphrased not quoted),
   "fitNotes": string (1–2 sentences on SW fit — your analysis),
@@ -1440,7 +1460,7 @@ Constraints:
 - All deals must be in FL, GA, SC, NC, TX, NM, AZ, CA, or NV
 - NO veterinary medicine — pure pet services only
 - "services" array must contain only: boarding, daycare, grooming, training
-- Omit any deal where age, employees, asking, SDE, or revenue are not disclosed
+- For undisclosed financial fields (gated behind login on some platforms), use null in the JSON. Do NOT omit the deal or invent values — surface the listing with whatever data is visible. Title, location, source, listingUrl are still required
 - Never reference "Acquisition Network Investors"
 - Never use the word "retrade"
 - For the distribution / SDE gate: when gate is "addon" or "standalone" only return deals plausibly clearing that partner distribution after debt service; when gate is "sde250" or "sde150" return deals where SDE is at least that USD amount; when gate is "any" return any deal meeting the other criteria` : `You are the SW Partners Deal Scout — an institutional-grade AI deal-sourcing agent operated by Brian Wyss through Avila Phoenix Ventures, LLC for SW Partners, LLC (principals: Sarah Wexler and David Sundblom).
@@ -1484,14 +1504,17 @@ Run multiple targeted web searches across these sources for the industries you'r
 - site:bizbuysell.com [industry] [state]
 - site:bizquest.com [industry] [state]
 - site:dealstream.com [industry] [state]
+- site:bizscout.com [industry] [state]
+- site:dealos.bizscout.com [industry] [state]
+- "[industry] for sale" bizscout [state]
 
 Home services examples: HVAC, plumbing, electrical, pest control, lawn care, roofing, garage door, pool service
 Pet services examples: pet boarding, dog daycare, pet resort, pet grooming, dog training
 Manufacturing examples: CNC machining, metal fabrication, injection molding, custom millwork, industrial coatings
 
-Run at least 4–8 distinct searches before assembling your output.
+Run at least 5–10 distinct searches before assembling your output. Search BizScout/DealOS specifically — it carries many listings not on BizBuySell or BizQuest.
 
-For each listing you find, verify it is currently active (not "sold" or archived) and extract real data points from the listing page.
+For each listing you find, verify it is currently active (not "sold" or archived). Some platforms (BizScout/DealOS especially) gate full listing details behind sign-in; in that case, use whatever financial data is visible in the public summary and use null for fields you cannot verify (see schema below). Do NOT invent values.
 
 CURRENT FILTERS APPLIED:
 - Strategies: ${activeStrats}
@@ -1514,11 +1537,11 @@ Each object must have:
   "subindustry": string,
   "state": string (2-letter),
   "city": string,
-  "age": number (years operating — if not stated, omit the deal),
-  "employees": number (if not stated, omit the deal),
-  "asking": number (USD; if "undisclosed" or not given, omit the deal),
-  "sde": number (USD; if not stated, omit the deal),
-  "revenue": number (USD; if not stated, omit the deal),
+  "age": number | null (years operating; use null if not disclosed in the listing),
+  "employees": number | null (use null if not disclosed),
+  "asking": number | null (USD; use null if undisclosed),
+  "sde": number | null (USD; use null if not disclosed),
+  "revenue": number | null (USD; use null if not disclosed),
   "strategy": "standalone" | "addon",
   "summary": string (2–4 sentences pulled from listing description, paraphrased not quoted),
   "fitNotes": string (1–2 sentences on why this fits SW),
@@ -1533,7 +1556,7 @@ Constraints:
 - Pet services deals: pure pet services only (boarding, daycare, grooming, training) — NO veterinary medicine
 - Pet services deals must be in: CO, FL, UT, AZ, GA, NV, WI
 - Manufacturing must be stand-alone only
-- Omit any deal where age, employees, asking, SDE, or revenue are not disclosed
+- For undisclosed financial fields (gated behind login on some platforms), use null in the JSON. Do NOT omit the deal or invent values — surface the listing with whatever data is visible. Title, location, source, listingUrl are still required
 - Never reference "Acquisition Network Investors" — this is SW Partners only
 - Never use the word "retrade"
 - For the distribution / SDE gate: when gate is "addon" or "standalone" only return deals plausibly clearing that partner distribution after debt service; when gate is "sde250" or "sde150" return deals where SDE is at least that USD amount; when gate is "any" return any deal meeting the other criteria`;
@@ -1724,15 +1747,15 @@ function dealsToCSV(deals){
     indLabel(d),
     d.subindustry,
     stratLabel(d.strategy),
-    d.city.replace(/,\s*[A-Z]{2}.*$/, ''), // strip trailing state if present
-    d.state,
-    currentYear - d.age,
-    d.age,
-    d.employees,
-    d.asking,
-    d.sde,
-    d.revenue,
-    (d.asking / d.sde).toFixed(2) + 'x',
+    d.city ? d.city.replace(/,\s*[A-Z]{2}.*$/, '') : '', // strip trailing state if present
+    d.state || '',
+    d.age != null ? (currentYear - d.age) : '',
+    d.age != null ? d.age : '',
+    d.employees != null ? d.employees : '',
+    d.asking != null ? d.asking : '',
+    d.sde != null ? d.sde : '',
+    d.revenue != null ? d.revenue : '',
+    (d.asking != null && d.sde != null && d.sde > 0) ? (d.asking / d.sde).toFixed(2) + 'x' : '',
     d.summary,
     d.fitNotes,
     d.risk,
