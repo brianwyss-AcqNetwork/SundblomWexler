@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
-<meta name="hsw-scout-version" content="v3.3-sw-partners-rebrand-2026-05-14" />
+<meta name="hsw-scout-version" content="v3.4-sde-floor-toggles-2026-05-14" />
 <title>SW Partners Deal Scout · Sarah Wexler &amp; David Sundblom</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -368,7 +368,7 @@
       <span>Operating Partner: <b>Brian Wyss · Avila Phoenix Ventures, LLC</b></span>
       <span>Strategy: <b>Stand-Alone + Add-On / Stacking</b></span>
     </div>
-    <div class="right">v3.3 · SW Partners</div>
+    <div class="right">v3.4 · SW Partners</div>
   </div>
 </header>
 
@@ -447,11 +447,13 @@
     </div>
 
     <div class="field">
-      <label>Distribution Threshold</label>
+      <label>Distribution / SDE Floor</label>
       <select id="distSel">
         <option value="any" selected>Any qualifying deal</option>
         <option value="addon">Add-On — $100K+ partner distribution</option>
         <option value="standalone">Stand-Alone — $400K+ partner distribution</option>
+        <option value="sde250">SDE Floor — $250K+ (widen sweep)</option>
+        <option value="sde150">SDE Floor — $150K+ (widen sweep)</option>
       </select>
     </div>
 
@@ -1173,8 +1175,11 @@ function scoreDeal(deal, ctx){
   // Geography
   if(ctx.geoStates && !ctx.geoStates.has(deal.state)) return 0;
   // Distribution threshold
+  // Distribution / SDE floor gate
   if(ctx.distFilter === 'standalone' && deal.strategy !== 'standalone') return 0;
   if(ctx.distFilter === 'addon' && deal.strategy !== 'addon') return 0;
+  if(ctx.distFilter === 'sde250' && (!deal.sde || deal.sde < 250000)) return 0;
+  if(ctx.distFilter === 'sde150' && (!deal.sde || deal.sde < 150000)) return 0;
   // SDE strength relative to ask
   const multiple = deal.asking / deal.sde;
   if(multiple < 3.2) score += 8;
@@ -1328,7 +1333,14 @@ async function runScout(){
   }
   logPush(`Geography: ${[...(ctx.geoStates||[])].join(', ') || 'unrestricted'}`);
   logPush(`Floors: ${ctx.ageFloor}+ yrs · ${ctx.hcFloor}+ employees`);
-  logPush(`Distribution gate: ${ctx.distFilter==='any'?'any':ctx.distFilter==='standalone'?'$400K+ (Stand-Alone)':'$100K+ (Add-On)'}`);
+  const gateLabel = ({
+    'any':'any',
+    'standalone':'$400K+ (Stand-Alone partner distribution)',
+    'addon':'$100K+ (Add-On partner distribution)',
+    'sde250':'SDE $250K+ (widen sweep)',
+    'sde150':'SDE $150K+ (widen sweep)'
+  })[ctx.distFilter] || ctx.distFilter;
+  logPush(`Distribution / SDE gate: ${gateLabel}`);
   logPush(`Sweeping ${activePlats.length} platform feeds…`);
 
   const customCtx = document.getElementById('customCtx').value.trim();
@@ -1394,7 +1406,7 @@ CURRENT FILTERS APPLIED:
 - Geography: ${[...(ctx.geoStates||[])].join(', ')}
 - Age floor: ${ctx.ageFloor}+ years
 - Headcount floor: ${ctx.hcFloor}+ employees
-- Distribution gate: ${ctx.distFilter}
+- Distribution / SDE gate: ${gateLabel}
 - Custom notes: ${customCtx || 'none'}
 - Platforms: ${activePlats.join(', ')}
 
@@ -1431,7 +1443,7 @@ Constraints:
 - Omit any deal where age, employees, asking, SDE, or revenue are not disclosed
 - Never reference "Acquisition Network Investors"
 - Never use the word "retrade"
-- Only include deals that plausibly clear the distribution floor for their strategy` : `You are the SW Partners Deal Scout — an institutional-grade AI deal-sourcing agent operated by Brian Wyss through Avila Phoenix Ventures, LLC for SW Partners, LLC (principals: Sarah Wexler and David Sundblom).
+- For the distribution / SDE gate: when gate is "addon" or "standalone" only return deals plausibly clearing that partner distribution after debt service; when gate is "sde250" or "sde150" return deals where SDE is at least that USD amount; when gate is "any" return any deal meeting the other criteria` : `You are the SW Partners Deal Scout — an institutional-grade AI deal-sourcing agent operated by Brian Wyss through Avila Phoenix Ventures, LLC for SW Partners, LLC (principals: Sarah Wexler and David Sundblom).
 
 CRITICAL OPERATING MODE: LIVE SOURCING ONLY
 - You MUST use the web_search tool to find REAL, CURRENT business-for-sale listings
@@ -1487,7 +1499,7 @@ CURRENT FILTERS APPLIED:
 - Geography: ${[...(ctx.geoStates||[])].join(', ') || 'all SW states'}
 - Age floor: ${ctx.ageFloor}+ years
 - Headcount floor: ${ctx.hcFloor}+ employees
-- Distribution gate: ${ctx.distFilter}
+- Distribution / SDE gate: ${gateLabel}
 - Custom notes: ${customCtx || 'none'}
 - Platforms: ${activePlats.join(', ')}
 
@@ -1524,7 +1536,7 @@ Constraints:
 - Omit any deal where age, employees, asking, SDE, or revenue are not disclosed
 - Never reference "Acquisition Network Investors" — this is SW Partners only
 - Never use the word "retrade"
-- Only include deals that plausibly clear the distribution threshold for their strategy`;
+- For the distribution / SDE gate: when gate is "addon" or "standalone" only return deals plausibly clearing that partner distribution after debt service; when gate is "sde250" or "sde150" return deals where SDE is at least that USD amount; when gate is "any" return any deal meeting the other criteria`;
 
   const userMsg = isPet
     ? `Run a thorough sweep of business-for-sale listing platforms for currently active pet boarding mandate deals in FL, GA, SC, NC, TX, NM, AZ, CA, NV. Use web_search aggressively. Return the JSON array of qualifying LIVE listings with verified listingUrls. If zero qualify, return []. Custom sourcing notes: ${customCtx || 'apply standard mandate.'}`
