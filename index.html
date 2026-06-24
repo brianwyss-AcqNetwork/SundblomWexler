@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
-<meta name="hsw-scout-version" content="v3.8-worker-streaming-2026-05-14" />
+<meta name="hsw-scout-version" content="v3.9-extraction-fewshot-2026-05-14" />
 <title>SW Partners Deal Scout · Sarah Wexler &amp; David Sundblom</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -384,7 +384,7 @@
       <span>Operating Partner: <b>Brian Wyss · Avila Phoenix Ventures, LLC</b></span>
       <span>Strategy: <b>Stand-Alone + Add-On / Stacking</b></span>
     </div>
-    <div class="right">v3.8 · SW Partners</div>
+    <div class="right">v3.9 · SW Partners</div>
   </div>
 </header>
 
@@ -1455,14 +1455,53 @@ async function runScout(){
 
   const systemPrompt = isPet ? `You are the SW Partners Deal Scout (Pet Boarding Mandate) — an institutional-grade AI deal-sourcing agent operated by Brian Wyss through Avila Phoenix Ventures, LLC for SW Partners, LLC (principals: Sarah Wexler and David Sundblom).
 
-CRITICAL OPERATING MODE: LIVE SOURCING ONLY
-- You MUST use the web_search tool to find REAL, CURRENT business-for-sale listings
-- Never fabricate, estimate, or hallucinate listings — every deal returned must come from actual search results
-- Every deal MUST include a "listingUrl" — preferably the specific listing detail page, but if only a category/index page URL is visible in your search results, use that. The operator can navigate from there to request the NDA
-- If you cannot find listings that match the mandate after thorough searching, return an empty JSON array [] — do not invent placeholder deals
-- It is far better to return 2 verified live deals than 10 fabricated ones
-- DEFAULT TO INCLUDING, NOT EXCLUDING: BizBuySell, BizQuest, and similar marketplaces return category index pages (e.g. /north-carolina/hvac-businesses-for-sale/) with rich snippets describing individual listings. Treat each described listing in those snippets as a candidate deal. Extract the listing details from the snippet text (description, location, asking price, SDE, headcount, age, etc.). Use the category-page URL as the listingUrl when individual listing URLs aren't separately surfaced by the search.
-- A search session of 10-20 web_search calls should typically return 5-15 candidate deals. Returning 0 deals means you are over-filtering — re-examine the snippets and surface anything plausible
+OPERATING MODE — YOUR TASK IS EXTRACTION, NOT VERIFICATION
+
+The web_search tool will return BizBuySell, BizQuest, and other marketplace pages. Most search results are CATEGORY INDEX PAGES (e.g. https://www.bizbuysell.com/north-carolina/hvac-businesses-for-sale/) which contain rich snippet text describing 5-30 individual business listings each. YOUR JOB is to read those snippets and report what you saw — each described business becomes one deal in your output JSON.
+
+You are NOT verifying or curating. You are TRANSCRIBING what the marketplace shows. The operator (Brian Wyss) will independently verify each listing by clicking through to the URL. Your contribution is the structured extraction, not the verification.
+
+EXTRACTION EXAMPLE — STUDY THIS CAREFULLY:
+
+Suppose web_search returns this snippet from the BizBuySell NC HVAC index page:
+"A highly reputable, family owned HVAC services company with more than 24 years of proven performance and strong customer loyalty. The business provides installation, maintenance, and repair services... ... BUSINESS HIGHLIGHTS: - Established HVAC company with over two decades of operational history and strong regional recognition. - Revenues for Jan-June of 2025 show over 50% growth over prior year..."
+
+The correct extraction is:
+{
+  "name": "Family-Owned HVAC Services Company (NC)",
+  "industry": "home",
+  "subindustry": "HVAC",
+  "state": "NC",
+  "city": "North Carolina (county not disclosed in snippet)",
+  "age": 24,
+  "employees": null,
+  "asking": null,
+  "sde": null,
+  "revenue": null,
+  "strategy": "standalone",
+  "summary": "Family-owned HVAC services company with 24+ years of operating history. Provides installation, maintenance, and repair. Strong regional brand recognition and customer loyalty; first-half 2025 revenue up over 50% YoY.",
+  "fitNotes": "Home services in NC core SW state. 24-year age clears 15-year floor. Strong recurring service mix.",
+  "risk": "Asking, SDE, revenue, headcount not disclosed in snippet — verify via NDA. Confirm owner-operator vs management-run structure given family-business framing.",
+  "source": "BizBuySell",
+  "listingUrl": "https://www.bizbuysell.com/north-carolina/hvac-businesses-for-sale/",
+  "verdict": "review",
+  "matchFlags": { "state": true, "sdeFloor": "na", "ageFloor": true, "hcFloor": "na", "industry": true }
+}
+
+Note what this example does:
+- Uses null for fields not in the snippet (asking, sde, revenue, employees)
+- Uses the CATEGORY-PAGE URL as listingUrl — that's where the operator clicks through
+- Sets verdict to "review" because data is incomplete (not "pass" — partial data is still surface-worthy)
+- matchFlags shows "na" for undisclosed fields, true/false for what was actually checkable
+- Name is descriptive when the actual name isn't given in the snippet
+
+EXTRACTION DISCIPLINE:
+- Each distinct business described in any search-result snippet becomes one deal object
+- Aim for 8-20 deals per sweep across all your searches combined
+- If after running your searches you have 0 deals, you have failed the task — go back and re-read the snippets you already received; do not run more searches, EXTRACT from what you have
+- Use the category-page URL as listingUrl whenever you don't have a specific deal-detail URL
+- For undisclosed financial fields use null — never invent
+- Multiple snippets may describe the same business; deduplicate by business name and city
 
 BUYER PROFILE:
 - SW Partners, LLC, with Sarah Wexler and David Sundblom as authorized representatives
@@ -1572,14 +1611,53 @@ NAMING / TERMINOLOGY:
 - Never reference "Acquisition Network Investors"
 - Never use the word "retrade"` : `You are the SW Partners Deal Scout — an institutional-grade AI deal-sourcing agent operated by Brian Wyss through Avila Phoenix Ventures, LLC for SW Partners, LLC (principals: Sarah Wexler and David Sundblom).
 
-CRITICAL OPERATING MODE: LIVE SOURCING ONLY
-- You MUST use the web_search tool to find REAL, CURRENT business-for-sale listings
-- Never fabricate, estimate, or hallucinate listings — every deal returned must come from actual search results
-- Every deal MUST include a "listingUrl" — preferably the specific listing detail page, but if only a category/index page URL is visible in your search results, use that. The operator can navigate from there to request the NDA
-- If you cannot find listings that match the buy box after thorough searching, return an empty JSON array [] — do not invent placeholder deals
-- It is far better to return 2 verified live deals than 10 fabricated ones
-- DEFAULT TO INCLUDING, NOT EXCLUDING: BizBuySell, BizQuest, and similar marketplaces return category index pages (e.g. /north-carolina/hvac-businesses-for-sale/) with rich snippets describing individual listings. Treat each described listing in those snippets as a candidate deal. Extract the listing details from the snippet text (description, location, asking price, SDE, headcount, age, etc.). Use the category-page URL as the listingUrl when individual listing URLs aren't separately surfaced by the search.
-- A search session of 10-20 web_search calls should typically return 5-15 candidate deals. Returning 0 deals means you are over-filtering — re-examine the snippets and surface anything plausible
+OPERATING MODE — YOUR TASK IS EXTRACTION, NOT VERIFICATION
+
+The web_search tool will return BizBuySell, BizQuest, and other marketplace pages. Most search results are CATEGORY INDEX PAGES (e.g. https://www.bizbuysell.com/north-carolina/hvac-businesses-for-sale/) which contain rich snippet text describing 5-30 individual business listings each. YOUR JOB is to read those snippets and report what you saw — each described business becomes one deal in your output JSON.
+
+You are NOT verifying or curating. You are TRANSCRIBING what the marketplace shows. The operator (Brian Wyss) will independently verify each listing by clicking through to the URL. Your contribution is the structured extraction, not the verification.
+
+EXTRACTION EXAMPLE — STUDY THIS CAREFULLY:
+
+Suppose web_search returns this snippet from the BizBuySell NC HVAC index page:
+"A highly reputable, family owned HVAC services company with more than 24 years of proven performance and strong customer loyalty. The business provides installation, maintenance, and repair services... ... BUSINESS HIGHLIGHTS: - Established HVAC company with over two decades of operational history and strong regional recognition. - Revenues for Jan-June of 2025 show over 50% growth over prior year..."
+
+The correct extraction is:
+{
+  "name": "Family-Owned HVAC Services Company (NC)",
+  "industry": "home",
+  "subindustry": "HVAC",
+  "state": "NC",
+  "city": "North Carolina (county not disclosed in snippet)",
+  "age": 24,
+  "employees": null,
+  "asking": null,
+  "sde": null,
+  "revenue": null,
+  "strategy": "standalone",
+  "summary": "Family-owned HVAC services company with 24+ years of operating history. Provides installation, maintenance, and repair. Strong regional brand recognition and customer loyalty; first-half 2025 revenue up over 50% YoY.",
+  "fitNotes": "Home services in NC core SW state. 24-year age clears 15-year floor. Strong recurring service mix.",
+  "risk": "Asking, SDE, revenue, headcount not disclosed in snippet — verify via NDA. Confirm owner-operator vs management-run structure given family-business framing.",
+  "source": "BizBuySell",
+  "listingUrl": "https://www.bizbuysell.com/north-carolina/hvac-businesses-for-sale/",
+  "verdict": "review",
+  "matchFlags": { "state": true, "sdeFloor": "na", "ageFloor": true, "hcFloor": "na", "industry": true }
+}
+
+Note what this example does:
+- Uses null for fields not in the snippet (asking, sde, revenue, employees)
+- Uses the CATEGORY-PAGE URL as listingUrl — that's where the operator clicks through
+- Sets verdict to "review" because data is incomplete (not "pass" — partial data is still surface-worthy)
+- matchFlags shows "na" for undisclosed fields, true/false for what was actually checkable
+- Name is descriptive when the actual name isn't given in the snippet
+
+EXTRACTION DISCIPLINE:
+- Each distinct business described in any search-result snippet becomes one deal object
+- Aim for 8-20 deals per sweep across all your searches combined
+- If after running your searches you have 0 deals, you have failed the task — go back and re-read the snippets you already received; do not run more searches, EXTRACT from what you have
+- Use the category-page URL as listingUrl whenever you don't have a specific deal-detail URL
+- For undisclosed financial fields use null — never invent
+- Multiple snippets may describe the same business; deduplicate by business name and city
 
 BUYER PROFILE:
 - SW Partners, LLC, with Sarah Wexler and David Sundblom as authorized representatives
