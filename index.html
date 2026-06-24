@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
-<meta name="hsw-scout-version" content="v3.6-soft-criteria-matchflags-2026-05-14" />
+<meta name="hsw-scout-version" content="v3.7-extraction-from-snippets-2026-05-14" />
 <title>SW Partners Deal Scout · Sarah Wexler &amp; David Sundblom</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -384,7 +384,7 @@
       <span>Operating Partner: <b>Brian Wyss · Avila Phoenix Ventures, LLC</b></span>
       <span>Strategy: <b>Stand-Alone + Add-On / Stacking</b></span>
     </div>
-    <div class="right">v3.6 · SW Partners</div>
+    <div class="right">v3.7 · SW Partners</div>
   </div>
 </header>
 
@@ -1458,9 +1458,11 @@ async function runScout(){
 CRITICAL OPERATING MODE: LIVE SOURCING ONLY
 - You MUST use the web_search tool to find REAL, CURRENT business-for-sale listings
 - Never fabricate, estimate, or hallucinate listings — every deal returned must come from actual search results
-- Every deal MUST include a "listingUrl" pointing to the real listing detail page you found
+- Every deal MUST include a "listingUrl" — preferably the specific listing detail page, but if only a category/index page URL is visible in your search results, use that. The operator can navigate from there to request the NDA
 - If you cannot find listings that match the mandate after thorough searching, return an empty JSON array [] — do not invent placeholder deals
 - It is far better to return 2 verified live deals than 10 fabricated ones
+- DEFAULT TO INCLUDING, NOT EXCLUDING: BizBuySell, BizQuest, and similar marketplaces return category index pages (e.g. /north-carolina/hvac-businesses-for-sale/) with rich snippets describing individual listings. Treat each described listing in those snippets as a candidate deal. Extract the listing details from the snippet text (description, location, asking price, SDE, headcount, age, etc.). Use the category-page URL as the listingUrl when individual listing URLs aren't separately surfaced by the search.
+- A search session of 10-20 web_search calls should typically return 5-15 candidate deals. Returning 0 deals means you are over-filtering — re-examine the snippets and surface anything plausible
 
 BUYER PROFILE:
 - SW Partners, LLC, with Sarah Wexler and David Sundblom as authorized representatives
@@ -1538,7 +1540,7 @@ Each object must have:
   "fitNotes": string (1–2 sentences on SW fit — your analysis),
   "risk": string (1–2 sentences on diligence concern — your analysis),
   "source": string (platform name: "BizBuySell" / "BizQuest" / "DealStream" / "LoopNet"),
-  "listingUrl": string (the FULL https:// URL to the listing detail page where an NDA can be requested),
+  "listingUrl": string (FULL https:// URL — prefer the specific listing detail page; if only a category/index page is visible, use that URL instead),
   "verdict": "advance" | "review" | "pass",
   "matchFlags": {
     "state": boolean,
@@ -1573,9 +1575,11 @@ NAMING / TERMINOLOGY:
 CRITICAL OPERATING MODE: LIVE SOURCING ONLY
 - You MUST use the web_search tool to find REAL, CURRENT business-for-sale listings
 - Never fabricate, estimate, or hallucinate listings — every deal returned must come from actual search results
-- Every deal MUST include a "listingUrl" pointing to the real listing detail page you found
+- Every deal MUST include a "listingUrl" — preferably the specific listing detail page, but if only a category/index page URL is visible in your search results, use that. The operator can navigate from there to request the NDA
 - If you cannot find listings that match the buy box after thorough searching, return an empty JSON array [] — do not invent placeholder deals
 - It is far better to return 2 verified live deals than 10 fabricated ones
+- DEFAULT TO INCLUDING, NOT EXCLUDING: BizBuySell, BizQuest, and similar marketplaces return category index pages (e.g. /north-carolina/hvac-businesses-for-sale/) with rich snippets describing individual listings. Treat each described listing in those snippets as a candidate deal. Extract the listing details from the snippet text (description, location, asking price, SDE, headcount, age, etc.). Use the category-page URL as the listingUrl when individual listing URLs aren't separately surfaced by the search.
+- A search session of 10-20 web_search calls should typically return 5-15 candidate deals. Returning 0 deals means you are over-filtering — re-examine the snippets and surface anything plausible
 
 BUYER PROFILE:
 - SW Partners, LLC, with Sarah Wexler and David Sundblom as authorized representatives
@@ -1652,7 +1656,7 @@ Each object must have:
   "fitNotes": string (1–2 sentences on why this fits SW),
   "risk": string (1–2 sentences on top diligence concern),
   "source": string (platform name: "BizBuySell" / "BizQuest" / "DealStream" / "LoopNet"),
-  "listingUrl": string (the FULL https:// URL to the listing detail page where an NDA can be requested),
+  "listingUrl": string (FULL https:// URL — prefer the specific listing detail page; if only a category/index page is visible, use that URL instead),
   "verdict": "advance" | "review" | "pass",
   "matchFlags": {
     "state": boolean,
