@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
-<meta name="hsw-scout-version" content="v3.9-extraction-fewshot-2026-05-14" />
+<meta name="hsw-scout-version" content="v3.10-parser-salvage-2026-05-14" />
 <title>SW Partners Deal Scout · Sarah Wexler &amp; David Sundblom</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -384,7 +384,7 @@
       <span>Operating Partner: <b>Brian Wyss · Avila Phoenix Ventures, LLC</b></span>
       <span>Strategy: <b>Stand-Alone + Add-On / Stacking</b></span>
     </div>
-    <div class="right">v3.9 · SW Partners</div>
+    <div class="right">v3.10 · SW Partners</div>
   </div>
 </header>
 
@@ -1778,7 +1778,7 @@ NAMING / TERMINOLOGY:
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-sonnet-4-5',
-        max_tokens: 8000,
+        max_tokens: 16000,
         system: systemPrompt,
         tools: [
           { type: 'web_search_20250305', name: 'web_search', max_uses: 10 }
@@ -1807,21 +1807,52 @@ NAMING / TERMINOLOGY:
     const lastText = textBlocks.length ? textBlocks[textBlocks.length-1] : '';
     const combinedText = textBlocks.join('\n');
 
-    // Helper: extract a valid JSON array from a string using bracket-counting,
-    // tolerating preamble/postamble narration around the array.
-    function extractJsonArray(str){
-      const cleaned = str.replace(/```json|```/g,'');
-      // Try strategy 1: direct parse if the string starts with [
-      const trimmed = cleaned.trim();
-      if(trimmed.startsWith('[')){
-        try{ const r = JSON.parse(trimmed); if(Array.isArray(r)) return r; }catch(e){}
+    // Helpers
+    function cleanForParse(str){
+      // Strip markdown fences, citation tags from web_search, and stray BOM
+      return str
+        .replace(/```json|```/g, '')
+        .replace(/<\/?antml:cite[^>]*>/g, '')
+        .replace(/<\/?cite[^>]*>/g, '')
+        .replace(/\uFEFF/g, '');
+    }
+
+    // Walk the string and find bracket-balanced JSON OBJECT spans starting at `start`.
+    // Returns end index (exclusive) or -1 if no balanced close found.
+    function findBalancedObjectEnd(str, start){
+      let depth = 0, inStr = false, esc = false;
+      for(let j = start; j < str.length; j++){
+        const ch = str[j];
+        if(esc){ esc = false; continue; }
+        if(ch === '\\'){ esc = true; continue; }
+        if(ch === '"'){ inStr = !inStr; continue; }
+        if(inStr) continue;
+        if(ch === '{') depth++;
+        else if(ch === '}'){
+          depth--;
+          if(depth === 0) return j + 1;
+        }
       }
-      // Strategy 2: find the first '[' and bracket-count forward to find the
-      // matching ']' (respecting strings to avoid false closes inside text).
-      for(let i=0;i<cleaned.length;i++){
+      return -1;
+    }
+
+    // Strategy A: parse the whole string as a JSON array (after cleaning).
+    function tryWholeArray(str){
+      const cleaned = cleanForParse(str).trim();
+      if(!cleaned.startsWith('[')) return null;
+      try{
+        const r = JSON.parse(cleaned);
+        return Array.isArray(r) ? r : null;
+      }catch(e){ return null; }
+    }
+
+    // Strategy B: bracket-count from the first '[' to the matching ']'.
+    function tryBracketCount(str){
+      const cleaned = cleanForParse(str);
+      for(let i = 0; i < cleaned.length; i++){
         if(cleaned[i] !== '[') continue;
         let depth = 0, inStr = false, esc = false;
-        for(let j=i;j<cleaned.length;j++){
+        for(let j = i; j < cleaned.length; j++){
           const ch = cleaned[j];
           if(esc){ esc = false; continue; }
           if(ch === '\\'){ esc = true; continue; }
@@ -1831,14 +1862,11 @@ NAMING / TERMINOLOGY:
           else if(ch === ']'){
             depth--;
             if(depth === 0){
-              const candidate = cleaned.slice(i, j+1);
+              const candidate = cleaned.slice(i, j + 1);
               try{
                 const r = JSON.parse(candidate);
                 if(Array.isArray(r)) return r;
-              }catch(e){
-                // not valid; continue scanning for next [
-                break;
-              }
+              }catch(e){ /* try next [ */ break; }
             }
           }
         }
@@ -1846,11 +1874,47 @@ NAMING / TERMINOLOGY:
       return null;
     }
 
-    let deals = extractJsonArray(lastText);
-    if(deals === null) deals = extractJsonArray(combinedText);
+    // Strategy C: SALVAGE — walk forward looking for top-level '{' inside what
+    // looks like an array context, extracting each balanced object. This rescues
+    // truncated arrays (Claude hit max_tokens) and arrays with a corrupt cell.
+    function trySalvageObjects(str){
+      const cleaned = cleanForParse(str);
+      const startBracket = cleaned.indexOf('[');
+      if(startBracket === -1) return null;
+      const deals = [];
+      let i = startBracket + 1;
+      while(i < cleaned.length){
+        // skip whitespace and commas
+        while(i < cleaned.length && /[\s,]/.test(cleaned[i])) i++;
+        if(i >= cleaned.length) break;
+        if(cleaned[i] === ']') break; // proper array end
+        if(cleaned[i] !== '{'){ i++; continue; }
+        const end = findBalancedObjectEnd(cleaned, i);
+        if(end === -1){
+          // Truncated last object — stop salvaging
+          break;
+        }
+        const objText = cleaned.slice(i, end);
+        try{
+          deals.push(JSON.parse(objText));
+        }catch(e){
+          // skip the broken object
+        }
+        i = end;
+      }
+      return deals.length > 0 ? deals : null;
+    }
 
-    if(deals === null){
-      logPush('Could not parse JSON array from live response', 'log-err');
+    // Try each strategy in order
+    let deals = tryWholeArray(lastText) ||
+                tryBracketCount(lastText) ||
+                trySalvageObjects(lastText) ||
+                tryWholeArray(combinedText) ||
+                tryBracketCount(combinedText) ||
+                trySalvageObjects(combinedText);
+
+    if(deals === null || deals.length === 0){
+      logPush('Could not parse any deals from live response', 'log-err');
       logPush('Raw response preview: ' + combinedText.slice(0,300), 'log-err');
       renderEmpty('Live sourcing completed but the response could not be parsed. Try again.');
       btn.disabled=false; btn.textContent='Scout Listings'; return;
